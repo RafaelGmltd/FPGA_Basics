@@ -5,16 +5,16 @@ module key_ctrl_cntr
     input              rst,
     input        [1:0] key,
     output logic [7:0] led,
-    output logic en_up,
-    output logic en_down
+    output logic     en_up,
+    output logic   en_down
 );
     
     wire any_key_0 =  key[0];  // reduction operation logical OR: if at least one 
-                            // of the buttons is pressed, then any_key is equal to 1
+                               // of the buttons is pressed, then any_key is equal to 1
     wire any_key_1 = key[1];
 
     logic  any_key_r_0;
-    logic  any_key_r_1;   // registers
+    logic  any_key_r_1;        // registers
 
     always_ff @ (posedge clk or posedge rst)
         if (rst)
