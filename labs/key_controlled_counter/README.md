@@ -1,4 +1,4 @@
-# ** Key-controlled counter**
+#  Key-controlled counter
 
 Now let's modify our LED counter.
 
@@ -11,8 +11,8 @@ Therefore, we need to generate a signal that will tell the counter to increment 
 To generate such a signal, we will use the fact that a certain number of clock cycles will pass while pressing the button. We will set up a flip-flop that will latch the logical level of the button press signal, and at the moment when the logic level changes from low to high or from high to low, we will send a signal to the counter, indicating that it should update its value at that precise moment.
 # *RTL Analisys*
 
-![Schematic](schematic.pdf)
+![Schematic](schematic.png)
 
 # *Simulation*
 
-![Simulated rresult](wave_form.pdf)
+![Simulated rresult](wave_form.png)
