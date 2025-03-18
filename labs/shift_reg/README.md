@@ -38,3 +38,7 @@ To control the frequency, we will use a counter that generates an enable signal 
 ```shift_reg = {shift_reg[N-2:0], button_on};```                                                                                                                             
 
 We can also input entire sequences of data and shift them through the register to pass them further
+
+During the simulation, we hold the button until our shift register is completely filled with 1s. Then, we release the button and observe how the shift register gradually shifts all the 1s.
+
+![Simulated result](wave_form.png)
