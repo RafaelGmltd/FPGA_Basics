@@ -1,6 +1,6 @@
 # **Shift Register**
 
-#  What is a Shift Register?
+##  What is a Shift Register?
 
 A shift register is a set of flip-flops connected in series, which shifts its data left or right with each clock pulse.
 
@@ -10,14 +10,14 @@ The last flip-flop either:
 Outputs the data.
 Discards the data (if there is no circular connection).
 
-#  Lab Implementation
+##  Lab Implementation
 
 In this lab, we will describe a simple shift register consisting of 8 bits and control signals that determine whether the data shifts left or right.
 
 To control the frequency, we will use a counter that generates an enable signal (en) when it reaches a certain bit width. For simulation purposes, we will use only a 4-bit counter so that our waveform does not become an infinitely long sequence of clock cycles.
 (In a real lab experiment, we will use a 32-bit counter.)
 
-#  How It Works
+##  How It Works
 
 1. First, we reset the shift register to 0 using the rst signal.
 2. Then, if at least one of the buttons is pressed, an input signal triggers and sets a logical 1 at the input.
