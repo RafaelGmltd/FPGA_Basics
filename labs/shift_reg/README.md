@@ -1,0 +1,40 @@
+# **Shift Register**
+
+#  What is a Shift Register?
+
+A shift register is a set of flip-flops connected in series, which shifts its data left or right with each clock pulse.
+
+The input data enters the first flip-flop.
+On each clock cycle, the contents of each flip-flop are transferred to the next one.
+The last flip-flop either:
+Outputs the data.
+Discards the data (if there is no circular connection).
+
+#  Lab Implementation
+
+In this lab, we will describe a simple shift register consisting of 8 bits and control signals that determine whether the data shifts left or right.
+
+To control the frequency, we will use a counter that generates an enable signal (en) when it reaches a certain bit width. For simulation purposes, we will use only a 4-bit counter so that our waveform does not become an infinitely long sequence of clock cycles.
+(In a real lab experiment, we will use a 32-bit counter.)
+
+#  How It Works
+
+1. First, we reset the shift register to 0 using the rst signal.
+2. Then, if at least one of the buttons is pressed, an input signal triggers and sets a logical 1 at the input.
+3. This logical 1 is fed into the first register, but the actual writing occurs only on the posedge of the clock when the enable signal (en) is 1.
+4. The enable condition is controlled by a 4-bit counter, which activates en when its two least significant bits (LSB) are 0. This happens every 4 clock cycles (2^2). This same approach was used in the binary counter implementation (see binary_counter).
+5. Thus, when a button is pressed, a logical 1 is stored in the first register. Now, every 4 clock cycles, our logic shifts this 1 one bit to the right, until it reaches the least significant bit :
+
+```$shift_reg = {button_on, shift_reg[LED-1:1]};```                                                                                                                          
+
+6. The least significant bit of our shift register can be:
+- Output to the system.
+- Or, we can loop our shift register, where the output data is fed back to the input:
+
+```shift_reg = {shift_reg[0], shift_reg[7:1]};```                                                                                                                          
+
+7. We can modify the logic so that the data shifts to the left instead of the right:         
+
+```shift_reg = {shift_reg[N-2:0], button_on};```                                                                                                                             
+
+We can also input entire sequences of data and shift them through the register to pass them further
