@@ -1,10 +1,10 @@
 module moore_fsm
 (
-    input          clk,
-    input          rst,
-    input          en,
-    input  [1:0]   x,
-    //output         y1,y0
+    input                clk,
+    input                rst,
+    input                en,
+    input  [1:0]         x,
+    output               y1,y0,
     output logic [2:0]   y
 );
 
@@ -62,7 +62,11 @@ module moore_fsm
 
     // Output logic based on current state
     assign y = state;
-    //assign y1 = (state == S0 | S2 | S4);
-    //assign y0 = (state == S2 | S4);
+    assign y1 = (state == S0 & (x == 2'd0 | 2'd1))|
+                (state == S2 & (x == 2'd3 | 2'd0))| 
+                (state == S4 & (x == 2'd0 | 2'd3));
+    
+    assign y0 = (state == S2 & (x == 2'd3 | 2'd0))| 
+                (state == S4 & (x == 2'd0 | 2'd3));
 
 endmodule
