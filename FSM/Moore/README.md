@@ -1,1 +1,1 @@
-![Simulated result](simulated_result.jpg)
+![Simulated result](simulated_result_moore.jpg)
