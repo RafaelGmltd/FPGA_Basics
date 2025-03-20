@@ -13,7 +13,7 @@ module tb_snail_moore_fsm;
  
 
     // Instantiate the FSM module
-    snail_moore_fsm uut (
+    moore_fsm uut (
         .clk(clk),
         .rst(rst),
         .en(en),
