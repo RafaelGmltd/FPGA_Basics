@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module tb_snail_moore_fsm;
+module moore_fsm;
 
     // Testbench signals
     logic clk;
