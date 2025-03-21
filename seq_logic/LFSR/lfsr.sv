@@ -5,7 +5,7 @@ module random
     output logic [3:0] random
 );
 
-    // Uses LFSR, Linear Feedback Shift Register
+// Uses LFSR, Linear Feedback Shift Register
 
     always_ff @ (posedge clk or posedge rst)
         if (rst)
