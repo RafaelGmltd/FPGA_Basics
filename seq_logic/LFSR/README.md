@@ -33,3 +33,4 @@ and an initial state (seed) of
 
 This generator produces a pseudorandom sequence until it repeats.
 
+![LFSR](lfsr.png)
