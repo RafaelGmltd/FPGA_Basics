@@ -2,11 +2,11 @@
 
 We have 8 LEDs, and we want to implement a counter on them. Each time one of the 8 bits is set to 1, one LED will light up. The clock frequency is 50 MHz, which means 50 million cycles per second. In binary terms, this equals log2(50e6) = 26 bits.
  
-```$clog2 (clk_mhz * 1000*1000)```                                                                                                                           
+```$clog2 (CLK * 1000*1000)```                                                                                                                           
 
 Our counter will increment by one each clock cycle, and we need to allocate only 8 bits for our counter. We use :
 
-```cnt[$left (cnt-:w_led)```                                                                                                                                       
+```cnt[$left (cnt-:led)```                                                                                                                                       
 
 to extract the [25:18] slice from the 26-bit counter, assigning it to our LEDs.
 
@@ -27,9 +27,17 @@ All the specifications for this FPGA Development Board can be found through the 
 [Basys 3](https://digilent.com/reference/programmable-logic/basys-3/reference-manual)
 
 
-I will also attach a file with the .xdc extension.The .xdc file in Vivado is used to specify constraints for the designed digital circuit.
+I will also attach a file with the  ```Basys-3-Master.xdc```  extension.The .xdc file in Vivado is used to specify constraints for the designed digital circuit.
 1. Pin assignments: it specifies which signals will be connected to specific FPGA pins.
 2. Clock constraints: defining clock frequencies for various signals.
 3. .... and so on.
 
+Note that all I/O names must match the names in the .xdc file
+
 In the file  ```basys3_specific_top.sv```  the main specifications of the Development Board I will be working with for all subsequent lab works are described.
+
+![4 bit binary counter](bnr_cntr.gif)
+
+SW0 is responsible for the reset (rst), and it is in the logic low state. As seen at a frequency of 100 MHz, the switching frequency of the LEDs is still quite fast, so I left only 4 LEDs to make it more convenient to observe the counter. It is also possible to reduce the frequency and limit the number of active LEDs to visually track the counter. This can be done in this line of code by modifying the parameters:
+
+```cnt[$left (cnt-:led)```
