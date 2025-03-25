@@ -1,12 +1,12 @@
 # **Binary Counter Using LEDs**
 
 We have 8 LEDs, and we want to implement a counter on them. Each time one of the 8 bits is set to 1, one LED will light up. The clock frequency is 50 MHz, which means 50 million cycles per second. In binary terms, this equals log2(50e6) = 26 bits.
-
-```$clog2 (clk_mhz * 1000 *1000```                                                                                                                                           
+ 
+```$clog2 (clk_mhz * 1000*1000)```                                                                                                                           
 
 Our counter will increment by one each clock cycle, and we need to allocate only 8 bits for our counter. We use :
 
-```cnt[$left(cnt-:w_led```                                                                                                                                                   
+```cnt[$left (cnt-:w_led)```                                                                                                                                       
 
 to extract the [25:18] slice from the 26-bit counter, assigning it to our LEDs.
 
@@ -15,3 +15,21 @@ We specifically chose the most significant 8 bits of our counter because the clo
 Therefore, while the 17 least significant bits change, it will take 2^17 = 131072 cycles for the first bit of the 8 control LED bits to change, and the same interval will be between each change of the 8 control bits. In this way, we can control the speed of the LEDs. If we increase the interval, the LEDs will light up slower; if we reduce the interval, the LEDs will light up faster.
 
 ```00000000 XXXXXXXXXXXXXXXXXX``` – the most significant bits control the LEDs, and the least significant bits introduce the delay.
+
+## The example I described above is just for simplicity and understanding.
+
+For this lab work, I will be using the FPGA Development Board Basys 3 Artix-7 by Digilent.
+
+![Development Board](basys_3.jpg)
+
+All the specifications for this FPGA Development Board can be found through the link I will attach below.
+
+[Basys 3](https://digilent.com/reference/programmable-logic/basys-3/reference-manual)
+
+
+I will also attach a file with the .xdc extension.The .xdc file in Vivado is used to specify constraints for the designed digital circuit.
+1. Pin assignments: it specifies which signals will be connected to specific FPGA pins.
+2. Clock constraints: defining clock frequencies for various signals.
+3. .... and so on.
+
+In the file  ```basys3_specific_top.sv```  the main specifications of the Development Board I will be working with for all subsequent lab works are described.
