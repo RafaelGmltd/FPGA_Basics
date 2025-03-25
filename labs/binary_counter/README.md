@@ -16,7 +16,9 @@ Therefore, while the 17 least significant bits change, it will take 2^17 = 13107
 
 ```00000000 XXXXXXXXXXXXXXXXXX``` – the most significant bits control the LEDs, and the least significant bits introduce the delay.
 
-## The example I described above is just for simplicity and understanding.
+### The example I described above is just for simplicity and understanding.
+
+## Four bit counter
 
 ![4 bit binary counter](bnr_cntr.gif)
 
