@@ -16,3 +16,5 @@ To generate such a signal, we will use the fact that a certain number of clock c
 # *Simulation*
 
 ![Simulated result](wave_form.jpg)
+
+![](key_ctrl_counter.gif)
