@@ -49,13 +49,6 @@ sub_shift_reg
  .*
  );
  
-// moore_fsm sub_moore_fsm
-// (.en       (       enable),
-//  .in_moore (       fsm_in),
-//  .out_moore(moore_fsm_out),
-//  .*
-//  );
-  
   mealy_fsm sub_mealy_fsm
  (.en         (         enable),
   .in_mealy   (         fsm_in),
