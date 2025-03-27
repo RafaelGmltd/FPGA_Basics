@@ -28,7 +28,7 @@ output logic  [DIGIT-1:0] digit
 
 wire enable;
 wire [1:0] fsm_in;
-wire /*moore_fsm_out,*/mealy_fsm_out;
+wire mealy_fsm_out;
 wire [1:0] mealy_state_out;
 
 
