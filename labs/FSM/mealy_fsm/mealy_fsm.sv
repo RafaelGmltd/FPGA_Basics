@@ -1,10 +1,12 @@
+
 module mealy_fsm
 (
 input                       clk,
 input                       rst,
 input                       en,
 input [1:0]                 in_mealy,
-output logic                out_mealy
+output                      out_mealy,
+output logic [1:0]          state_mealy
 );
 
 typedef enum bit [1:0]
@@ -23,9 +25,10 @@ state_fsm state,next_state;
 always_ff@(posedge clk or posedge rst)
   if(rst)
     state <= S2;
-  else 
-    state <= next_state;
-    
+  else if(en)
+ 
+    state       <= next_state;
+
 // Next state logic   
 always_comb
     begin
@@ -53,7 +56,8 @@ always_comb
     end
 
     // Output logic based on current state
-    assign out_mealy = (state == S0 & (in_mealy == 2'd1 | 2'd2))|
-                       (state == S1 & (in_mealy == 2'd1       ))|
-                       (state == S2 & (in_mealy == 2'd0       ));
+    assign out_mealy   = (state == S0 & (in_mealy == 2'd1 || 2'd2))|
+                         (state == S1 &        (in_mealy == 2'd1))|
+                         (state == S2 &        (in_mealy == 2'd0));
+    assign state_mealy = state;
 endmodule

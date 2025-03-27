@@ -5,5 +5,5 @@ with the state transitions (edges). The nomenclature 00/0 is quite usual and mea
 the inputs are 00 (the two bits before the “/”) the output is 0 (the bit after the “/”). So, this
 graph shows the behavior of a 2-input, 1-output sequential system
 
-![Mealy FSM](mealy.jpg)
+![Mealy FSM](mealy_lab.jpg)
 
