@@ -46,6 +46,7 @@ During the simulation, we hold the button until our shift register is completely
 ##  Shift left shift register 
 
 ``` else if (enable & ~sw[1] & sw[2])```
+
        ```shift_reg <= {shift_reg[W-2:0], button_on}; ``` 
 
 ![Shift left shift register](shft_reg_lft.gif)
@@ -53,6 +54,7 @@ During the simulation, we hold the button until our shift register is completely
 ##  Shift right shift register 
 
 ``` else if (enable & sw[1] & sw[2])```
+
        ```shift_reg = {button_on,shift_reg[W-1:1]}; ``` 
 
 ![Shift right shift register](shft_reg_rght.gif)
@@ -60,6 +62,7 @@ During the simulation, we hold the button until our shift register is completely
 ##  Ring shift register 
 
 ``` else if (enable & ~sw[2])```
+
        ```shift_reg = {shift_reg[0],shift_reg[W-1:1]}; ``` 
 
 ![Ring shift register](shft_reg_ring.gif)
