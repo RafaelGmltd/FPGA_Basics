@@ -31,14 +31,35 @@ To control the frequency, we will use a counter that generates an enable signal 
 - Output to the system.
 - Or, we can loop our shift register, where the output data is fed back to the input:
 
-```shift_reg = {shift_reg[0], shift_reg[7:1]};```                                                                                                                          
+```shift_reg = {shift_reg[0], shift_reg[7:1]};```                                                                                                                  
 
 7. We can modify the logic so that the data shifts to the left instead of the right:         
 
-```shift_reg = {shift_reg[N-2:0], button_on};```                                                                                                                             
+```shift_reg = {shift_reg[N-2:0], button_on};```                                                                                                          
 
 We can also input entire sequences of data and shift them through the register to pass them further
 
 During the simulation, we hold the button until our shift register is completely filled with 1s. Then, we release the button and observe how the shift register gradually shifts all the 1s.
 
 ![Simulated result](wave_form.png)
+
+##  Shift left shift register 
+
+``` else if (enable & ~sw[1] & sw[2])```
+       ```shift_reg <= {shift_reg[W-2:0], button_on}; ``` 
+
+![Shift left shift register](shft_reg_lft.gif)
+
+##  Shift right shift register 
+
+``` else if (enable & sw[1] & sw[2])```
+       ```shift_reg = {button_on,shift_reg[W-1:1]}; ``` 
+
+![Shift right shift register](shft_reg_rght.gif)
+
+##  Ring shift register 
+
+``` else if (enable & ~sw[2])```
+       ```shift_reg = {shift_reg[0],shift_reg[W-1:1]}; ``` 
+
+![Ring shift register](shft_reg_ring.gif)
