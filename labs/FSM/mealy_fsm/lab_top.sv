@@ -107,9 +107,9 @@ end
 // always_comb begin
 // //out
 // case (moore_fsm_out)
-//   1'b0:    abcdefgh_fsm_out    = 8'b1111_1100;
-//   1'b1:    abcdefgh_fsm_out    = 8'b0110_0000;
-//   default: abcdefgh_fsm_out    = 8'b0000_0000;
+//   2'd0:   abcdefgh_fsm_out     = 8'b1111_1100;
+//   2'd2:   abcdefgh_fsm_out     = 8'b1101_1010;
+//   2'd3:   abcdefgh_fsm_out     = 8'b1111_0010;
 //   endcase
 // //state
 // case (moore_state_out)
