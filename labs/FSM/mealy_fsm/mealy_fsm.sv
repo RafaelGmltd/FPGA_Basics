@@ -1,4 +1,3 @@
-
 module mealy_fsm
 (
 input                       clk,
@@ -24,7 +23,7 @@ state_fsm state,next_state;
 // State register
 always_ff@(posedge clk or posedge rst)
   if(rst)
-    state <= S2;
+    state       <= S2;
   else if(en)
  
     state       <= next_state;
@@ -56,8 +55,8 @@ always_comb
     end
 
     // Output logic based on current state
-    assign out_mealy   = (state == S0 & (in_mealy == 2'd1 || 2'd2))|
-                         (state == S1 &        (in_mealy == 2'd1))|
-                         (state == S2 &        (in_mealy == 2'd0));
+    assign out_mealy   = (state == S0)&((in_mealy == 2'd1)|(in_mealy == 2'd2))|
+                         (state == S1 &                    (in_mealy == 2'd1))|
+                         (state == S2 &                    (in_mealy == 2'd0));
     assign state_mealy = state;
 endmodule

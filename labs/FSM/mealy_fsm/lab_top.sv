@@ -19,24 +19,25 @@ output logic [LED-1:0]   led,
 //- - - - - Seven Seg Display - - - - - - - 
 
 output logic [      7:0] abcdefgh,
-output logic  [DIGIT-1:0] digit
+output logic [DIGIT-1:0] digit
 );
 
 //assign abcdefgh         = '0;
 //assign led              = '0;
 //assign digit            = '0;
 
-wire enable;
+wire       toggle;
+wire       enable;
 wire [1:0] fsm_in;
-wire mealy_fsm_out;
+wire [1:0] mealy_fsm_out;
 wire [1:0] mealy_state_out;
-
-
+//wire [2:0] moore_state_out;
+//wire [1:0] moore_fsm_out;
 
 strobe_gen
 #(.CLK_MHZ(CLK), .STRB_HZ(3))
 sub_strobe_gen
-(.strobe(enable), .*);
+( .strobe(enable), .*);
 
 shift_reg
 #(.D(LED))
@@ -49,32 +50,76 @@ sub_shift_reg
  .*
  );
  
-  mealy_fsm sub_mealy_fsm
- (.en         (         enable),
-  .in_mealy   (         fsm_in),
-  .out_mealy  (  mealy_fsm_out),
-  .state_mealy(mealy_state_out),
-  .*
-  );
+// moore_fsm sub_moore_fsm
+// (.en          (       enable),
+//  .in_moore    (       fsm_in),
+//  .out_moore   (moore_fsm_out),
+//  .state_moore (moore_state_out),
+//  .*
+//  );
   
-/*always_comb
-begin
-case(mealy_fsm_out)
-  1'b0: abcdefgh = 8'b1111_1100;
-  1'b1: abcdefgh = 8'b0110_0000;
-endcase 
-digit = DIGIT'(1);
-end*/ 
+mealy_fsm sub_mealy_fsm
+(.en         (         enable),
+ .in_mealy   (         fsm_in),
+ .out_mealy  (  mealy_fsm_out),
+ .state_mealy(mealy_state_out),
+ .*
+ );
+  
+digit sub_digit
+(.toggle_digit(toggle),
+ .clk(clk)
+);
+  
 
-always_comb
-begin
-case(mealy_state_out)
-  2'b00: abcdefgh = 8'b1111_1100;
-  2'b01: abcdefgh = 8'b0110_0000;
-  2'b10: abcdefgh = 8'b1101_1010;
-  2'b11: abcdefgh = 8'b1111_0010;
-endcase 
-digit = DIGIT'(2);
+logic [    7:0]            abcdefg_fsm_out, abcdefg_state;
+always_comb begin
+  if (toggle) 
+  begin
+    abcdefgh               = abcdefg_fsm_out; // digit 0
+    digit                  = 4'b0001;        // on
+  end 
+  else begin
+    abcdefgh               = abcdefg_state; // digit 1
+    digit                  = 4'b0010;          // on
+  end
 end
 
-endmodule
+//Mealy FSM
+always_comb begin
+//out
+case (mealy_fsm_out)
+  1'b0: abcdefg_fsm_out    = 8'b1111_1100;
+  1'b1: abcdefg_fsm_out    = 8'b0110_0000;
+  default: abcdefg_fsm_out = 8'b0000_0000;
+  endcase
+//state
+case (mealy_state_out)
+  2'b00: abcdefg_state     = 8'b1111_1101;
+  2'b01: abcdefg_state     = 8'b0110_0001;
+  2'b10: abcdefg_state     = 8'b1101_1011;
+  2'b11: abcdefg_state     = 8'b1111_0011;
+  default: abcdefg_state   = 8'b0000_0000;
+endcase
+end
+
+////Moore FSM
+//always_comb begin
+////out
+//case (moore_fsm_out)
+//  1'b0: abcdefg_fsm_out    = 8'b1111_1100;
+//  1'b1: abcdefg_fsm_out    = 8'b0110_0000;
+//  default: abcdefg_fsm_out = 8'b0000_0000;
+//  endcase
+////state
+//case (moore_state_out)
+//  3'b000:   abcdefgh       = 8'b1111_1101;
+//  3'b001:   abcdefgh       = 8'b0110_0001;
+//  3'b010:   abcdefgh       = 8'b1101_1011;
+//  3'b011:   abcdefgh       = 8'b1111_0011;
+//  3'b100:   abcdefgh       = 8'b0110_0111;
+//  default:  abcdefgh       = 8'b0000_0000;
+//endcase
+//end
+
+endmodule 

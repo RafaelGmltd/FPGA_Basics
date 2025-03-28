@@ -7,3 +7,9 @@ graph shows the behavior of a 2-input, 1-output sequential system
 
 ![Mealy FSM](mealy_lab.jpg)
 
+## 0 -> 1 -> 2 -> 3 -> 0
+
+The output value changes before the state because the output value is assigned through continuous 
+assignment, which reacts to any change in the input data, while the state reacts only to the clock signal
+
+![Mealy FSM](mealy.gif)
