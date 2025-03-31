@@ -51,10 +51,10 @@ Here’s how the pipeline would work over several clock cycles:
 
 | Clock Cycle | Stage 1 (X²)  | Stage 2 (X³) | Output (Y) |
 |-------------|---------------|--------------|------------|
-| **1**       | \( X1^2 = 4 \)  | -            | -          |
-| **2**       | \( X2^2 = 9 \)  | \( X1^3 = 8 \) | -          |
-| **3**       | \( X3^2 = 16 \) | \( X2^3 = 27 \) | \( Y1 = 8 \) |
-| **4**       | -               | \( X3^3 = 64 \) | \( Y2 = 27 \) |
+| **1**       | \( X1² = 4 \)  | -            | -          |
+| **2**       | \( X2² = 9 \)  | \( X1³ = 8 \) | -          |
+| **3**       | \( X3² = 16 \) | \( X2³ = 27 \) | \( Y1 = 8 \) |
+| **4**       | -               | \( X3³ = 64 \) | \( Y2 = 27 \) |
 | **5**       | -               | -            | \( Y3 = 64 \) |
 
 Each clock cycle processes a new number, while intermediate results are propagated through the pipeline.
