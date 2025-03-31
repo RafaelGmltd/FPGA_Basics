@@ -25,26 +25,6 @@ In a pipelined architecture, new data can be fed into the input every clock cycl
 
 ## Pipeline Concept for Exponentiation
 
-Problem Statement
-We want to compute the cube of a number 
-𝑋
-X, i.e.,
-
-𝑌
-=
-𝑋
-3
-=
-𝑋
-×
-𝑋
-×
-𝑋
-Y=X 
-3
- =X×X×X
-Using pipelining, we break this computation into multiple stages to allow continuous processing of new input values, maximizing throughput.
-
 Concept of Pipelining
 In pipelining, a task is divided into smaller stages, each performing part of the computation. The result from each stage is passed on to the next stage, and multiple tasks can be processed simultaneously at different stages of the pipeline. Here's how it works for exponentiation:
 
@@ -63,19 +43,19 @@ Each of these stages is executed in parallel during different clock cycles, allo
 
 For instance, let's assume you need to compute the cube of three numbers:
 
-- \( X_1 = 2 \)
-- \( X_2 = 3 \)
-- \( X_3 = 4 \)
+- \( X1 = 2 \)
+- \( X2 = 3 \)
+- \( X3 = 4 \)
 
 Here’s how the pipeline would work over several clock cycles:
 
 | Clock Cycle | Stage 1 (X²)  | Stage 2 (X³) | Output (Y) |
 |-------------|---------------|--------------|------------|
-| **1**       | \( X_1^2 = 4 \)  | -            | -          |
-| **2**       | \( X_2^2 = 9 \)  | \( X_1^3 = 8 \) | -          |
-| **3**       | \( X_3^2 = 16 \) | \( X_2^3 = 27 \) | \( Y_1 = 8 \) |
-| **4**       | -               | \( X_3^3 = 64 \) | \( Y_2 = 27 \) |
-| **5**       | -               | -            | \( Y_3 = 64 \) |
+| **1**       | \( X1^2 = 4 \)  | -            | -          |
+| **2**       | \( X2^2 = 9 \)  | \( X1^3 = 8 \) | -          |
+| **3**       | \( X3^2 = 16 \) | \( X2^3 = 27 \) | \( Y1 = 8 \) |
+| **4**       | -               | \( X3^3 = 64 \) | \( Y2 = 27 \) |
+| **5**       | -               | -            | \( Y3 = 64 \) |
 
 Each clock cycle processes a new number, while intermediate results are propagated through the pipeline.
 
