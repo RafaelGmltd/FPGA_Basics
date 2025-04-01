@@ -16,7 +16,9 @@ Initially, as data enters the pipeline, the first output corresponds to the firs
 ## Key Feature of Pipelining
 
 A crucial characteristic of pipelining is that it carries input values along with it for a certain number of clock cycles.
+
 Example: Automotive Assembly Line
+
 Without pipelining: Constantly returning to fetch the initial input values, which slows down the process.
 With pipelining: The input values travel through the pipeline for three clock cycles, eliminating the need to hold them at the initial trigger.
 
@@ -58,7 +60,53 @@ Here’s how the pipeline would work over several clock cycles:
 | **5**       | -               | -            | \( Y3 = 64 \) |
 
 Each clock cycle processes a new number, while intermediate results are propagated through the pipeline.
+Otherwise, we would have to wait for three cycles before supplying new data to the input.
 
+![Pipelining](Pipelining.jpg)
 
+## WNS (Worst Negative Slack)
 
+Slack is the difference between the required arrival time (required time) and the actual arrival time (arrival time).
+
+WNS is the worst (most negative) slack in the design.
+
+Positive WNS → The design can operate at a frequency higher than the specified one.
+
+WNS = 0 → The design can operate exactly at the required frequency, but without any margin.
+
+Negative WNS → The design cannot operate at the required clock frequency because signals do not stabilize in time.
+
+For the sake of experiment, I will run a code that raises a number to the 5th power without pipelining. This means performing 5 multiplications, resulting in a fairly long critical path, which will negatively affect the clock frequency of our design. We can check the Vivado timing report and confirm that the WNS will be negative.
+
+![WNS Negative](WNS_neg.png)
+
+Now let's run the same code, but with pipelining.
+
+![WNS Positive](WNS_pos.png)
+
+## Clock Gating
+
+A mechanism for disabling the clock signal to logic fragments when they are not needed.
+
+This significantly reduces power consumption since inactive components do not expend energy processing clock pulses.
+
+Let's take our exponentiation pipeline as an example. If invalid data is received at the input, which does not require exponentiation, then this logic block can be disabled.
+
+One might ask: why not use asynchronous flip-flops to reset the data instead? The issue is that this would require routing a reset signal to the D flip-flop input, which immediately clears the flip-flop. However, the presence of such a reset increases the area of a single register by 25–35%.
+
+For this reason, standard cell libraries include two types of registers: DFFR (D flip-flop with reset) and DFF (D flip-flop without reset).
+
+As a result, designers often aim to eliminate the use of larger registers whenever possible.
+
+We add a flag indicating that the data in the current clock cycle is valid, correct, and can be latched and processed in the pipeline.
+
+If there is no ready data, the valid signal is set to zero for the required number of cycles, signaling that there is no valid data at the register input.
+
+Logically, if there is no valid data, there is no reason to propagate it through the pipeline. The valid output of the register is used to control groups of registers responsible for storing data for the next stage.
+
+Thus, starting from a certain pipeline stage, enable can be kept high if the data is valid and should be processed further.
+
+The valid logic is free-running—it does not have a separate enable. However, the registers storing the data now depend on enable, allowing resource savings by disabling unnecessary computations.
+
+![Pipelining Valid](Pipelining_Valid.jpg)
 
