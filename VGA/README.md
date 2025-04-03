@@ -1,6 +1,7 @@
 # Understanding VGA: How It Works and Its Standards  
 
-## 1. VGA Signals  
+## 1. VGA Signals 
+#### check vga.sv 
 
 VGA (Video Graphics Array) is an analog video standard that transmits images using separate RGB signals and synchronization signals.  
 
@@ -11,7 +12,7 @@ VGA (Video Graphics Array) is an analog video standard that transmits images usi
 - **Horizontal Sync (HSYNC)** — Marks the end of a horizontal line  
 - **Vertical Sync (VSYNC)** — Marks the end of a frame  
 
-These signals are transmitted through a 15-pin D-SUB connector.
+
 
 ---
 
@@ -132,3 +133,5 @@ The screen is represented as a **2D coordinate grid (x, y)**.
 The system checks whether the current pixel belongs to a specific area and assigns it a color accordingly.  
 
 Thus, the VGA controller manages **scanning, clock frequency, and color processing**, forming an image on the screen.  
+
+![Example: Simple Geometric Shapes with Different Color Depths](VGA.jpg)
