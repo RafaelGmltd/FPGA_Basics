@@ -98,6 +98,8 @@ The buffer regulates the counter’s state:
 - if space is occupied → the counter decreases
 - if space is freed → the counter increases
 
+![Rinf buffer](ring.gif)
+
 ## Generation of full and empty flags based on the read and write pointers of the FIFO.
 
 The FIFO depth is a power of two: 1, 2, 4, 8, ...
@@ -142,6 +144,8 @@ On the next clock cycle, both move to 1_00
 
 Since both the MSB and the lower bits now match, this condition is again interpreted as an empty buffer.
 
+![The FIFO depth is a power of two: 1, 2, 4, 8, ...](pow_2.gif)
+
 ## Slow Clock Generation Explanation
 
 If the entire system operates at a frequency of **100 MHz**, then, for example, a seven-segment display simply cannot process signals at such a high rate — the image would flicker or not appear at all.  
@@ -177,6 +181,8 @@ That's where the `BUFG` primitive comes into play:
 Using `slow_clk_raw` directly as a clock without a `BUFG` is **not recommended**:
 - It may cause **glitches**, since it is not guaranteed to be glitch-free or properly routed.
 - It can lead to **timing issues** and **synchronization failures**.
+
+
 
 
 
