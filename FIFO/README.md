@@ -142,6 +142,43 @@ On the next clock cycle, both move to 1_00
 
 Since both the MSB and the lower bits now match, this condition is again interpreted as an empty buffer.
 
+## Slow Clock Generation Explanation
+
+If the entire system operates at a frequency of **100 MHz**, then, for example, a seven-segment display simply cannot process signals at such a high rate — the image would flicker or not appear at all.  
+Therefore, we introduce a **slow clock** — a signal that toggles much more slowly (e.g., **100 Hz** or even **1 Hz**).
+
+In previous projects, we used an approach based on a **strobe signal** — a single pulse triggered when a counter reaches a certain value.  
+This method is convenient for **one-shot triggers**, but it doesn't provide a stable clock frequency.
+
+---
+
+### Stage 1: `counter`
+
+This is a basic counter that increments by `+1` on each rising edge of the system clock `clk`.
+
+- The input `enable` is always set to `1`, so the counter runs continuously.
+- The counter width is **26 bits**, which means it counts from `0` to `2^26 - 1` to complete one full cycle.
+- This requires exactly `2^26` clock cycles of the global `clk`.
+
+The output signal `slow_clk_raw` is derived from the **most significant bit** of the counter:
+
+- This bit toggles **once every `2^25` clock cycles**, i.e., its frequency is **2× slower** than the full counter frequency.
+
+### Why We Use `BUFG` for Slow Clock
+
+The **slow clock** that we generate is just a regular signal (`slow_clk_raw`).  
+However, to use it as a **clock source** in other modules (such as for synchronizing a FIFO, display refresh, etc.), this signal must be connected to the **global clock network**.
+
+That's where the `BUFG` primitive comes into play:
+
+- `BUFG` is a special buffer provided by the FPGA fabric.
+- It connects the input signal to the **global clock routing**, allowing the signal to be used safely as a real clock.
+
+Using `slow_clk_raw` directly as a clock without a `BUFG` is **not recommended**:
+- It may cause **glitches**, since it is not guaranteed to be glitch-free or properly routed.
+- It can lead to **timing issues** and **synchronization failures**.
+
+
 
 
 
