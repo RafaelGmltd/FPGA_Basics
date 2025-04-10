@@ -305,6 +305,9 @@
 
  Total: 9–10 cycles depending on FSM design
 
+# Nested radicals
+
+![Nested radicals](nested_radicals.png)
 
 
 
