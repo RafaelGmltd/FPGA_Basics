@@ -146,6 +146,58 @@ Since both the MSB and the lower bits now match, this condition is again interpr
 
 ![The FIFO depth is a power of two: 1, 2, 4, 8, ...](pow_2.gif)
 
+## FIFO Implementation Schemes
+
+   1. Full and Empty Signal Generation Based on FIFO Fill-Level Counter
+   Advantages:
+
+   Arbitrary FIFO depth.
+
+   Efficient usage of memory elements.
+
+   Convenient for implementing almost full and almost empty signals.
+
+   Disadvantages:
+
+   Requires additional logic in the form of a fill-level counter proportional to FIFO depth.
+
+   2. Full and Empty Signal Generation Based on Read and Write Pointer Comparison
+   Advantages:
+
+   Does not require additional logic such as fill-level counters.
+
+   FIFO depth is a power of two, which simplifies address calculations.
+
+   Disadvantages:
+
+   Fixed depth limited to powers of two.
+
+   Less efficient memory utilization compared to arbitrary-depth implementations.
+
+## Universal Approach to FIFO Design Without a Depth Counter ()
+
+One important observation when designing a FIFO is that it can be visualized as a closed circular buffer divided into arcs (segments), where the number of segments equals the FIFO depth: from 0 to n-1. Two pointers — the write pointer and the read pointer — are initially positioned at the same segment (position 0).
+
+Each write operation advances the write pointer, and each read operation advances the read pointer. As a result, the pointers move around the circle: the read pointer “chases” the write pointer but must never overtake it. Since multiple full rotations are possible, the pointers can loop around from 0 up to k-1 full circles. However, it is critical that the distance between the pointers never exceeds one full circle; otherwise, an overflow condition will occur.
+
+A special case arises when both pointers are at the same position. This may indicate either an empty or a full FIFO. To distinguish between these two states without using a separate fill-level counter, we propose the following approach:
+
+Each pointer (read and write) is assigned a parity bit (even or odd), which toggles every time the pointer wraps from the maximum index (n-1) back to 0.
+
+Therefore, when both pointers are at the same position:
+
+- If parity bits are equal, the FIFO is empty;
+
+- If parity bits are different, the FIFO is full.
+
+This design offers several advantages:
+
+Eliminates the need for a fill-level counter;
+
+Avoids restriction to power-of-two FIFO depths;
+
+Improves flexibility and scalability of FIFO architecture
+
 ## Slow Clock Generation Explanation
 
 If the entire system operates at a frequency of **100 MHz**, then, for example, a seven-segment display simply cannot process signals at such a high rate — the image would flicker or not appear at all.  
