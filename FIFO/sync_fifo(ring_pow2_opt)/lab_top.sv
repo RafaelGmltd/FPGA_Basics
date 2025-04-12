@@ -58,7 +58,9 @@ sub_counter
  .* 
 );
 
-sync_fifo
+sync_fifo 
+//sync_fifo_pow2 
+//sync_fifo_optimized
 #(.WIDTH(fifo_width),.DEPTH(fifo_depth))
 sub_fifo
 (
