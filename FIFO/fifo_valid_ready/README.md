@@ -6,18 +6,18 @@ The **Valid/Ready protocol** is one of the most widely used interface protocols 
 
 | Signal  | Direction         | Description                                   |
 |---------|-------------------|-----------------------------------------------|
-| `valid` | Sender → Receiver | Indicates that the data is valid and available. |
-| `ready` | Receiver → Sender | Indicates that the receiver is ready to accept data. |
+| `valid` | Transmitter → Receiver | Indicates that the data is valid and available. |
+| `ready` | Receiver → Transmitter | Indicates that the receiver is ready to accept data. |
 
 
 
 1. **Data is transferred only when both `valid` and `ready` are high**
-   - `valid` means the sender has prepared the data.
+   - `valid` means the transmitter has prepared the data.
    - `ready` means the receiver is ready to accept it.
    - Only when both signals are asserted, the data is actually transferred.
 
 2. **`valid` is controlled by the sender**
-   - The sender decides when the data is ready.
+   - The transmitter decides when the data is ready.
    - It holds `valid = 1` until the data is accepted (`ready = 1`).
 
 3. **`ready` is controlled by the receiver**
@@ -25,7 +25,7 @@ The **Valid/Ready protocol** is one of the most widely used interface protocols 
    - It can hold `ready = 0` to pause data intake.
 
 4. **If `ready = 0`, the data is "frozen"**
-   - The sender must not change the data on the bus while `ready = 0`.
+   - The transmitter must not change the data on the bus while `ready = 0`.
    - It must keep the same data until `ready` goes high.
 
 # Why It's Better to Keep `ready` High by Default
@@ -34,20 +34,20 @@ The `valid/ready` handshake protocol is designed to ensure smooth and efficient 
 
 ### How the Protocol Works
 
-- **Sender** asserts `valid = 1` when data is available.
+- **Transmitter** asserts `valid = 1` when data is available.
 - **Receiver** asserts `ready = 1` when it's ready to accept data.
 - A **transaction occurs** on the **next clock cycle** when both `valid` and `ready` are high.
 
 ### Benefits of Keeping `ready = 1` Always
 
-- The receiver **does not block** the sender.
+- The receiver **does not block** the transmitter.
 - As soon as `valid = 1`, the data is accepted **on the next clock cycle**.
 - This ensures **maximum throughput** — one transfer per clock cycle is possible.
 - Known as **zero-latency ready** or **always-ready interface** — ideal for performance.
 
 ### What Happens If `ready` Is Not Always High?
 
-- The sender has to **wait** for the receiver to assert `ready`.
+- The transmitter has to **wait** for the receiver to assert `ready`.
 - This introduces **extra cycles of latency**.
 - Overall data flow becomes **slower and less efficient**.
 
