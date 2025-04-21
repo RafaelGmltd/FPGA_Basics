@@ -44,13 +44,12 @@ module fifo_dualport #(
     // ------------------------------------------------------------------------
     // MUX
     // ------------------------------------------------------------------------
-    assign wen           =  push && ~enable_bypass;
-    assign ren           =  pop && ~almost_empty;
-    assign prefetch_ptr  = (rd_ptr == MAX_PTR) ? WIDTH_PTR'(0) : WIDTH_PTR'(rd_ptr + 1'b1);
-    assign almost_empty  =  wr_ptr == prefetch_ptr;
-    assign enable_bypass =  push && (empty_o || (almost_empty && pop));
-    assign data_o        =  bypass_valid ? bypass_data : sram_out;
-
+    assign wen           =  push && ~enable_bypass;                                          //MUX_5
+    assign ren           =  pop  && ~almost_empty;                                           //MUX_4
+    assign data_o        =  bypass_valid ? bypass_data : sram_out;                           //MUX_3
+    assign enable_bypass =  push && (empty_o || (almost_empty && pop));                      //MUX_2
+    assign almost_empty  =  wr_ptr == prefetch_ptr;                                          //MUX_1
+    assign prefetch_ptr  = (rd_ptr == MAX_PTR) ? WIDTH_PTR'(0) : WIDTH_PTR'(rd_ptr + 1'b1);  //MUX_0
     // ------------------------------------------------------------------------
     // SRAM
     // ------------------------------------------------------------------------
@@ -71,20 +70,27 @@ module fifo_dualport #(
     );
 
     // ------------------------------------------------------------------------
-    // Prefetch and bypass logic
+    //  Bypass logic
     // ------------------------------------------------------------------------
     always_ff @(posedge clk) begin
-        if (rst) begin
+        if (rst) 
+        begin
             bypass_valid <= 1'b0;
-        end else if (enable_bypass) begin
+        end 
+        else if (enable_bypass) 
+        begin
             bypass_valid <= 1'b1;
-        end else if (pop) begin
-             <= 1'b0;
+        end 
+        else if (pop) 
+        begin
+        bypass_valid    <= 1'b0;
         end
     end
 
-    always_ff @(posedge clk) begin
-        if (enable_bypass) begin
+    always_ff @(posedge clk) 
+    begin
+        if (enable_bypass) 
+        begin
             bypass_data <= data_i;
         end
     end
@@ -102,7 +108,7 @@ module fifo_dualport #(
             wr_ptr            <= '0;
             wr_circle_odd     <= 1'b0;
         end
-        else if (push) 
+        else if (push & !full) 
         begin
             if (wr_ptr == MAX_PTR) 
             begin
@@ -123,7 +129,7 @@ module fifo_dualport #(
             rd_ptr            <= '0;
             rd_circle_odd     <= 1'b0;
         end 
-        else if (pop) 
+        else if (pop & !empty) 
         begin
             if (rd_ptr == MAX_PTR) 
             begin
