@@ -1,55 +1,62 @@
 module fifo_dualport #(
     parameter WIDTH = 8,
     parameter DEPTH = 8
-) (
+) 
+(
     input  logic             clk,
     input  logic             rst,
     input  logic             push,
     input  logic             pop,
     input  logic [WIDTH-1:0] data_i,
-    output logic [WIDTH-1:0] data_o,
+    output logic [WIDTH-1:0] data_out,
     output logic             empty,
-    output logic             full
+    output logic             full,
+//    output logic [WIDTH-1:0] data_sram,
+    output logic             bypass_valid,
+                             enable_bypass,
+                             wr_circle_odd,
+                             rd_circle_odd,
+                             
+    output logic [WIDTH-1:0] wr_ptr,
+                             rd_ptr,
+                             
+    output logic             wen,
+                             ren,
+                             
+    output logic [WIDTH-1:0] bypass_data,
+    output logic             almost_empty,
+    
+    output logic [WIDTH-1:0] prefetch_ptr
+
+    
 );
+logic [WIDTH -1:0] sram_out;
 
     // ------------------------------------------------------------------------
     // Local parameters
     // ------------------------------------------------------------------------
 
-    localparam WIDTH_PTR   = $clog2(DEPTH);
-    localparam MAX_PTR     = WIDTH_PTR'(DEPTH - 1);
+    localparam W_PTR       = $clog2(DEPTH);
+    localparam MAX_PTR     = W_PTR'(DEPTH - 1);
 
     // ------------------------------------------------------------------------
     // Local signals
     // ------------------------------------------------------------------------
 
-    // SRAM
-    logic             ren;
-    logic             wen;
-    logic [WIDTH-1:0] sram_out;
 
-    // FIFO control
-    logic [W_PTR-1:0] wr_ptr;
-    logic [W_PTR-1:0] rd_ptr;
-    logic             wr_circle_odd;
-    logic             rd_circle_odd;
-
-    // Prefetch and bypass
-    logic             enable_bypass;
-    logic             bypass_valid;
-    logic [WIDTH-1:0] bypass_data;
-    logic             almost_empty;
-    logic [W_PTR-1:0] prefetch_ptr;
 
     // ------------------------------------------------------------------------
     // MUX
     // ------------------------------------------------------------------------
     assign wen           =  push && ~enable_bypass;                                          //MUX_5
     assign ren           =  pop  && ~almost_empty;                                           //MUX_4
-    assign data_o        =  bypass_valid ? bypass_data : sram_out;                           //MUX_3
-    assign enable_bypass =  push && (empty_o || (almost_empty && pop));                      //MUX_2
+    assign data_out      =  bypass_valid ? bypass_data : sram_out;                           //MUX_3
+    assign enable_bypass =  push && (empty || (almost_empty && pop));                        //MUX_2
     assign almost_empty  =  wr_ptr == prefetch_ptr;                                          //MUX_1
-    assign prefetch_ptr  = (rd_ptr == MAX_PTR) ? WIDTH_PTR'(0) : WIDTH_PTR'(rd_ptr + 1'b1);  //MUX_0
+    assign prefetch_ptr  = (rd_ptr == MAX_PTR) ? W_PTR'(0) : W_PTR'(rd_ptr + 1'b1);          //MUX_0
+
+          
+    
     // ------------------------------------------------------------------------
     // SRAM
     // ------------------------------------------------------------------------
@@ -60,13 +67,14 @@ module fifo_dualport #(
     )
     i_mem 
     (
-        .clk     ( clk          ),
-        .wen_i   ( wen          ),
-        .ren_i   ( ren          ),
-        .waddr_i ( wr_ptr       ),
-        .raddr_i ( prefetch_ptr ),
-        .data_i  ( data_i       ),
-        .data_o  ( sram_out     )
+        .clk            ( clk          ),
+        .wen            ( wen          ),
+        .ren            ( ren          ),
+        .wr_addr        ( wr_ptr       ),
+        .rd_addr        ( prefetch_ptr ),
+        .data_i         ( data_i       ),
+        .data_o         ( sram_out     )
+//        .data_out_sram  ( data_sram    )
     );
 
     // ------------------------------------------------------------------------
@@ -96,7 +104,7 @@ module fifo_dualport #(
     end
 
     // ------------------------------------------------------------------------
-    // Main FIFO logic
+    // FIFO logic
     // ------------------------------------------------------------------------
     assign empty = (wr_ptr == rd_ptr) && (wr_circle_odd == rd_circle_odd);
     assign full  = (wr_ptr == rd_ptr) && (wr_circle_odd != rd_circle_odd);

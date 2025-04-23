@@ -1,31 +1,32 @@
-// Simple Dual-Port Block RAM with One Clock
-// File: simple_dual_one_clock.v
-module simple_dual_one_clock
+module sram_dualport 
 #(
   parameter          WIDTH  = 8,
                      DEPTH  = 8,
-                     ADDR_W $clog2(DEPTH)    
+                     ADDR_W = $clog2(DEPTH)    
 )
 (
-input                clk,
-input                wen_i,
-input                ren_i,
-input  [ADDR_W -1:0] waddr_i,
-input  [ADDR_W -1:0] raddr_i,
-input  [WIDTH  -1:0] data_i,
-output [WIDTH  -1:0] data_o,
+input                      clk,
+input                      wen,
+input                      ren,
+input        [ADDR_W -1:0] wr_addr,
+input        [ADDR_W -1:0] rd_addr,
+input        [WIDTH  -1:0] data_i,
+output logic [WIDTH  -1:0] data_o,
+output logic [WIDTH  -1:0] data_out_sram
 );
 
 logic [WIDTH -1:0] sram [DEPTH -1:0];
-
+//assign data_out_sram = sram[1];
 always @(posedge clk) 
 begin
- if (wen_i)
-   sram[waddr_i] <= data_i;
+ if (wen)
+ begin
+   sram[wr_addr] <= data_i;
+   end
 end
 always @(posedge clk) 
+if (ren)
 begin
- if (ren_i)
-  data_o         <= sram[raddr_i];
+  data_o         <= sram[rd_addr];
 end
 endmodule
