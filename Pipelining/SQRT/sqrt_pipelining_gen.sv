@@ -1,3 +1,6 @@
+
+// The design works correctly in simulation, but during synthesis the logic gets optimized away by the synthesizer.
+
 module sq_root
 #( 
   parameter WIDTH = 8
