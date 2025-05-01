@@ -1,5 +1,6 @@
 
 // The design works correctly in simulation, but during synthesis the logic gets optimized away by the synthesizer.
+// Check other solutiion in PIPELINING _WITH_GENERATE -> SQRT_GEN
 
 module sq_root
 #( 

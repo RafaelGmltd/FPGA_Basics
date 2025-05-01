@@ -9,3 +9,5 @@ The generate construct unrolls all the generated code before simulation — duri
 ![Generate](generate_1.jpg)
 
 A register array is created, and the initial input value is stored in the first element, result_reg[0]. Then, the result of the first module’s computation is stored in the second element, result_reg[1]. In the next stage, the module receives result_reg[1] as input — which is the result of the previous stage — and stores its output in result_reg[2]. In this way, each successive module takes the result from the previous one and continues the computation, forming a processing chain.
+
+This section presents two methods for calculating the square root: one using multiplication, which requires more LUTs and flip-flops, and the other using only shifts, which reduces resource usage by nearly a factor of three
