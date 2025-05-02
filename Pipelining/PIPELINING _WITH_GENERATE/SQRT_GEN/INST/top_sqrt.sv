@@ -1,3 +1,9 @@
+//Vivado removes some parts of the logic during synthesis because certain outputs from submodules are not propagated to the top-level module outputs, 
+//and are considered unused or floating, leading the tool to optimize them away
+
+//As a solution, the bitwise square root calculation block can be instantiated directly inside the generate block — see the sqrt_top.sv file — 
+//or alternatively, use the attribute (* DONT_TOUCH = "true" *)
+
 module top_sqrt_pipeline
 #(
   parameter WIDTH  = 8,
@@ -36,6 +42,7 @@ module top_sqrt_pipeline
   generate
     for (i = 0; i < STAGES; i = i + 1) 
     begin: sqrt_stages
+    //(* DONT_TOUCH = "true" *)
       sq_root_stage
       #(
         .WIDTH(WIDTH)
