@@ -1,0 +1,3 @@
+# *Multiplexer*
+
+![Multiplexer](MUX.jpg)
