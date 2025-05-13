@@ -13,13 +13,13 @@ module top_sqrt_pipeline
   output logic                     result_almost_valid
 );
    
-  // Массивы для пайплайна
+  // Arrays
   logic [ WIDTH-1 :0] x_pipe       [0:STAGES];
   logic [ WIDTH-1:0] result_pipe   [0:STAGES];
   logic [ WIDTH -1:0] bit_pipe     [0:STAGES];
   logic               valid_pipe   [0:STAGES];
 
-  // Инициализация первой стадии
+  // First
   always_ff @(posedge clk or posedge rst) 
   begin
     if (rst) begin
