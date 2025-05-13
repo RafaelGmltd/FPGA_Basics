@@ -1,3 +1,3 @@
 # *Adder*
 
-![Adder](Adder.jpg)
+![Adder](adder.jpg)
