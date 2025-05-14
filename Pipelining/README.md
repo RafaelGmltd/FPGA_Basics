@@ -1,8 +1,8 @@
+# *Pipelining*
+
 ## The critical path
 
 The critical path is the longest segment of combinational logic, and it determines the clock frequency.
-## Pipelining
-
 What to do if the critical path is too long?
 The simplest approach is to break it up by inserting registers within segments of combinational logic. This is the fundamental principle of pipelining.
 Pipelining is the process of dividing a computational task into separate stages, each executed in a single clock cycle. Once a stage is completed, the data is passed to the next stage, allowing the first stage to begin processing a new set of data.
@@ -108,5 +108,5 @@ Thus, starting from a certain pipeline stage, enable can be kept high if the dat
 
 The valid logic is free-running—it does not have a separate enable. However, the registers storing the data now depend on enable, allowing resource savings by disabling unnecessary computations.
 
-![Pipelining Valid](Pipelining_Valid.jpg)
+![Pipelining Valid](PipeliningValid.jpg)
 

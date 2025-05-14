@@ -26,32 +26,31 @@ output logic [DIGIT-1:0] digit
 //assign led              = '0;
 //assign digit            = '0;
 
-localparam sw_actual = (sw > 8) ? 8
-                                        : sw;
+localparam sw_actual = (sw > 8) ? 8 : sw;
 
 logic [sw_actual-1:0] pow_input;
-
 logic [(5*sw_actual)-1:0] pow5;
-
 logic [(5*sw_actual)-1:0] pow_output;
 
 
 always_ff @ (posedge clk or posedge rst)
-    if (rst)
-        pow_input <= '0;
-    else
-        pow_input <= sw;
-
+begin
+if (rst)
+  pow_input <= '0;
+else
+  pow_input <= sw;
+end
 
 assign pow5 = pow_input * pow_input * pow_input * pow_input * pow_input;
 
-
 always_ff @ (posedge clk or posedge rst)
-    if (rst)
-        pow_output <= '0;
-    else
-        pow_output <= pow5;
+begin
+if (rst)
+  pow_output <= '0;
+else
+  pow_output <= pow5;
 
 assign led = LED'(pow_output);
+end
 
 endmodule

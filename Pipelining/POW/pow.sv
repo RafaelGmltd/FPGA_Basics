@@ -19,36 +19,42 @@ logic [W-    1:0] input_1_ff;
 logic [W-    1:0] input_2_ff;
 logic [W-    1:0] input_3_ff;
 
-    // Input data pipeline
+// Input data pipeline
 always_ff @ (posedge clk or posedge rst)
-    if (rst) 
-    begin
-      input_0_ff <= '0;
-      input_1_ff <= '0;
-      input_2_ff <= '0;
-      input_3_ff <= '0;
-    end
-    else 
-    begin
-      input_0_ff <= num;
-      input_1_ff <= input_0_ff;
-      input_2_ff <= input_1_ff;
-      input_3_ff <= input_2_ff;
-    end
+begin
+if (rst) 
+begin
+  input_0_ff <= '0;
+  input_1_ff <= '0;
+  input_2_ff <= '0;
+  input_3_ff <= '0;
+end
+else 
+begin
+  input_0_ff <= num;
+  input_1_ff <= input_0_ff;
+  input_2_ff <= input_1_ff;
+  input_3_ff <= input_2_ff;
+end
+end
 
 always_ff @ (posedge clk or posedge rst)
-    if (rst) begin
-      pow_2_ff <= '0;
-      pow_3_ff <= '0;
-      pow_4_ff <= '0;
-      pow_5_ff <= '0;
-    end
-    else begin
-      pow_2_ff <= input_0_ff * input_0_ff;
-      pow_3_ff <= input_1_ff * pow_2_ff ;
-      pow_4_ff <= input_2_ff * pow_3_ff;
-      pow_5_ff <= input_3_ff * pow_4_ff;
-    end
+begin
+if (rst) 
+begin
+  pow_2_ff <= '0;
+  pow_3_ff <= '0;
+  pow_4_ff <= '0;
+  pow_5_ff <= '0;
+end
+else 
+begin
+  pow_2_ff <= input_0_ff * input_0_ff;
+  pow_3_ff <= input_1_ff * pow_2_ff ;
+  pow_4_ff <= input_2_ff * pow_3_ff;
+  pow_5_ff <= input_3_ff * pow_4_ff;
+end
+end
     
 assign pow_output = pow_5_ff;
 endmodule
