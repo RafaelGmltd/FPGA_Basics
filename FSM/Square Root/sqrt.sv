@@ -6,9 +6,9 @@ module sqrt
 input  logic                    clk,
 input  logic                    rst,
 input  logic                    start,
-input  logic [WIDTH       -1:0] x,                 // input number
-output logic                    result_valid,      // result valid
-output logic [(WIDTH >> 1)-1:0] y                  // root
+input  logic [WIDTH       -1:0] x,             // input number
+output logic                    result_valid,  // result valid
+output logic [(WIDTH >> 1)-1:0] y              // root
 );
 logic        [ WIDTH      -1:0] x_reg;
 logic        [(WIDTH >> 1)-1:0] result;        // current result
@@ -33,47 +33,52 @@ always_ff @(posedge clk or posedge rst) begin
 end
 
 // Next state logic
-always_comb begin
-  next_state = state;
-  case (state)
-    START: if (start)                next_state = CALC;
-    CALC : if (current_bit  == '0)   next_state = DONE;  
-    DONE :                           next_state = START;
-  endcase
+always_comb 
+begin
+next_state = state;
+case (state)
+  START: if (start)                next_state = CALC;
+  CALC : if (current_bit  == '0)   next_state = DONE;  
+  DONE :                           next_state = START;
+ endcase
 end
 
 // Reg state
-always_ff @(posedge clk or posedge rst) begin
-  if (rst) 
-  begin
-    result       <= '0;
-    current_bit  <= 1 << ((WIDTH >> 1)-1);  // start MSB
-    x_reg        <= '0;
-    y            <= '0;
-    result_valid <= 1'b0;
-  end 
-  else 
-  begin
-    case (state)
-      START: if (start) begin
-               x_reg        <= x;
-               result       <= '0;
-               current_bit  <= 1 << ((WIDTH >> 1)-1);
-               y            <= '0;
-               result_valid <= 1'b0;
-             end
-      CALC:  begin
-               temp = result | current_bit;
-               if ((temp * temp) <= x_reg) 
-                 result          <= temp;
-                 current_bit     <= current_bit >> 1; // shift bit
-             end
-      DONE:  begin
-               y            <= result;          
-               result_valid <= 1'b1;  
-             end
-    endcase
-  end
+always_ff @(posedge clk or posedge rst) 
+begin
+if (rst) 
+begin
+  result       <= '0;
+  current_bit  <=  1 << ((WIDTH >> 1)-1);  // start MSB
+  x_reg        <= '0;
+  y            <= '0;
+  result_valid <=  1'b0;
+end 
+else 
+begin
+  case (state)
+    START: if (start) 
+    begin
+      x_reg        <=  x;
+      result       <= '0;
+      current_bit  <=  1 << ((WIDTH >> 1)-1);
+      y            <= '0;
+      result_valid <=  1'b0;
+    end
+    CALC:  
+    begin
+      temp = result | current_bit;
+      if ((temp * temp) <= x_reg) 
+        result          <= temp;
+        current_bit     <= current_bit >> 1; // shift bit
+    end
+    DONE:  
+    begin
+      y            <= result;          
+      result_valid <= 1'b1;  
+    end
+  endcase
+end
 end
 
 // Debug only
