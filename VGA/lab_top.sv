@@ -51,51 +51,48 @@ sub_strobe_gen
 wire inv_key_0 = ~ key [0];
 wire inv_key_1 = ~ key [1];
 
-    logic [7:0] dx, dy;
+logic [7:0] dx, dy;
 
-    always_ff @ (posedge clk)
-        if (rst)
-        begin
-            dx <= 4'b0;
-            dy <= 4'b0;
-        end
-        else if (enable)
-        begin
-            dx <= dx + inv_key_0;
-            dy <= dy + inv_key_1;
-        end
-        
-        
+always_ff @ (posedge clk)
+begin
+if (rst)
+begin
+  dx <= 4'b0;
+  dy <= 4'b0;
+end
+else if (enable)
+begin
+  dx <= dx + inv_key_0;
+  dy <= dy + inv_key_1;
+end
+end
+              
 always_comb
 begin
-    red   = 0;
-    green = 0;
-    blue  = 0;
-
-
+  red   = 0;
+  green = 0;
+  blue  = 0;
 //Land
-if (y > HEIGHT * 4 / 5) begin
-        red   = 4'h2;
-        green = 4'h5;
-        blue  = 4'h1;
-    end
-
-
- //Sun dynamic 
+if (y > HEIGHT * 4 / 5) 
+begin
+  red   = 4'h2;
+  green = 4'h5;
+   blue  = 4'h1;
+end
+//Sun dynamic 
 else if ((x - (WIDTH  >> 1)) * (x - (WIDTH  >> 1)) + ((y-dy) - ((HEIGHT >> 1)-100)) * ((y-dy) - ((HEIGHT >> 1)-100)) < ((HEIGHT >> 2) *(HEIGHT >> 2)))
-     begin
-       red   = 4'd15;
-       green = 4'd15;
-       blue  = 4'd0 ;
-     end
-
+begin
+  red   = 4'd15;
+  green = 4'd15;
+  blue  = 4'd0 ;
+end
 //Sky gradient   
 else
-    begin
-      red   = y[8:5];
-      green = y[8:6];
-      blue  = 4'hF;   
-    end   
+begin
+  red   = y[8:5];
+  green = y[8:6];
+  blue  = 4'hF;   
+end   
 end
 
 endmodule
