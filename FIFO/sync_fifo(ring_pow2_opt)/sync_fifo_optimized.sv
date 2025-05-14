@@ -24,42 +24,49 @@ logic wr_odd_circle, rd_odd_circle;
 logic [WIDTH-1:0] mem [DEPTH -1:0];
 
 always_ff@(posedge clk or posedge rst)
-    if(rst)
-    begin
-      wr_ptr        <= '0;
-      wr_odd_circle <= '0;
-    end
-    else if (push)
-    begin
+begin
+  if(rst)
+  begin
+    wr_ptr        <= '0;
+    wr_odd_circle <= '0;
+  end
+  else if (push)
+  begin
     if (wr_ptr == max_ptr)
     begin
       wr_ptr        <= '0;
       wr_odd_circle <= ~wr_odd_circle;
     end
-    else
-      wr_ptr        <= wr_ptr + 1'b1; 
-    end
+  else
+    wr_ptr        <= wr_ptr + 1'b1; 
+  end
+end
     
 always_ff@(posedge clk or posedge rst)
-    if(rst)
-    begin
-      rd_ptr        <= '0;
-      rd_odd_circle <= '0;
-    end
-    else if(pop)
-    begin
-    if (rd_ptr == max_ptr)
-    begin
-      rd_ptr        <= '0;
-      rd_odd_circle <= ~rd_odd_circle;
-    end
-    else
-    rd_ptr          <= rd_ptr + 1'b1;
-    end
+begin
+  if(rst)
+  begin
+    rd_ptr        <= '0;
+    rd_odd_circle <= '0;
+  end
+  else if(pop)
+  begin
+  if (rd_ptr == max_ptr)
+  begin
+    rd_ptr        <= '0;
+    rd_odd_circle <= ~rd_odd_circle;
+  end
+  else
+  rd_ptr          <= rd_ptr + 1'b1;
+  end
+end
 
 always_ff@(posedge clk or posedge rst)
+begin
   if (push)
     mem[wr_ptr]     <= wr_data;
+end
+
 assign rd_data       = mem[rd_ptr];
 
 wire same_ptr        = (wr_ptr == rd_ptr);

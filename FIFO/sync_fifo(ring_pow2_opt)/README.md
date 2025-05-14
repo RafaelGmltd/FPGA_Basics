@@ -1,4 +1,4 @@
-# FIFO
+# *FIFO*
 
 ## Types of Data Transfer
 
@@ -79,7 +79,7 @@ The key concept here is the write and read pointers, which move in a ring — li
 
 - The read pointer points to the currently occupied cell from which we need to read data.
 
-![Rinf buffer](ring_buffer.jpg)
+![Rinf buffer](FIFO_ring.jpg)
 
 Here arises a problem: since the system is synchronous and everything happens on clock edges, the transmitter may detect the FULL signal too late — only on the next clock cycle, after writing data into an already full buffer. This causes the last written data to be lost.
 For example, the buffer is not yet full, but a write occurs, and this makes it full. However, the transmitter only sees the updated FULL signal on the next clock cycle. If the wr_en (write enable) signal remains active at that moment, a violation occurs: data is written into an already full buffer.
@@ -114,7 +114,7 @@ Assume a FIFO buffer with a depth of 4(Important). This requires 2 bits to addre
 Initial state:
 
 Write pointer: 0_00
-Read pointer: 0_00
+Read pointer:  0_00
 
 → This is interpreted as an empty buffer.
 
@@ -208,7 +208,7 @@ This method is convenient for **one-shot triggers**, but it doesn't provide a st
 
 ---
 
-### Stage 1: `counter`
+### Counter
 
 This is a basic counter that increments by `+1` on each rising edge of the system clock `clk`.
 

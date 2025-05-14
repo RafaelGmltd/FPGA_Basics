@@ -28,33 +28,34 @@ sqrt_a_b_c
   .WIDTH_C(WIDTH_C)
   )
 dut
-(   .clk            (clk),
-    .rst            (rst),
+(   
+.clk            (clk),
+.rst            (rst),
     
-    .a              (x_1),
-    .result_a       (y_1),
-    .result_a_valid (result_valid_1),
+.a              (x_1),
+.result_a       (y_1),
+.result_a_valid (result_valid_1),
     
-    .b              (x_2),
-    .result_b       (y_2),
-    .result_b_valid (result_valid_2),  
+.b              (x_2),
+.result_b       (y_2),
+.result_b_valid (result_valid_2),  
     
-    .c              (x_3),
-    .result_c       (y_3),
-    .result_c_valid (result_valid_3), 
+.c              (x_3),
+.result_c       (y_3),
+.result_c_valid (result_valid_3), 
     
-    .sum(sum) 
+.sum(sum) 
 );
 
 parameter PERIOD = 10;
 initial
 begin
-  clk <= '0;
-  forever
-    begin
-      #(PERIOD/2)
-      clk <= ~clk;
-    end
+clk <= '0;
+forever
+begin
+  #(PERIOD/2)
+  clk <= ~clk;
+end
 end
 
 initial 

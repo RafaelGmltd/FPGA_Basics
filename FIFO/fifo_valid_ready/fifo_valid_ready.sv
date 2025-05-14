@@ -34,12 +34,12 @@ sync_fifo_opt
 #(.WIDTH(WIDTH), .DEPTH(DEPTH))
 sub_sync_opt
 (
- .clk(clk),
- .rst(rst),
- .push(fifo_push),
- .pop(fifo_pop),
- .empty(fifo_empty),
- .full(fifo_full),
+ .clk   (clk),
+ .rst   (rst),
+ .push  (fifo_push),
+ .pop   (fifo_pop),
+ .empty (fifo_empty),
+ .full  (fifo_full),
  .*
 );
 

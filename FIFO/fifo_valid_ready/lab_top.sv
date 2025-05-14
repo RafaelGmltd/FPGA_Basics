@@ -53,9 +53,9 @@ counter
 #(fifo_width)
 sub_counter
 (
- .clk(slow_clk),
- .enable(up_ready & up_valid),
- .cntr(write_data_index),
+ .clk    (slow_clk),
+ .enable (up_ready & up_valid),
+ .cntr   (write_data_index),
  .* 
 );
 
@@ -63,20 +63,20 @@ fifo_valid_ready
 #(.WIDTH(fifo_width),.DEPTH(fifo_depth))
 sub_fifo
 (
-.clk(slow_clk),
-.rst(rst),
+.clk (slow_clk),
+.rst (rst),
 .*
 );
 
 seven_segment_digit 
 sub_seven_display
 (
-.number_0(rd_data),
-.number_1(rd_ptr_display),
-.number_2(wr_ptr_display),
-.number_3(wr_data),
-.segments(abcdefgh),
-.digit_select(digit),
+.number_0     (rd_data),
+.number_1     (rd_ptr_display),
+.number_2     (wr_ptr_display),
+.number_3     (wr_data),
+.segments     (abcdefgh),
+.digit_select (digit),
 .*
 );
 
@@ -89,8 +89,8 @@ sub_slow_clk_gen
 
 BUFG bufg_inst 
 (
-.I(slow_clk_raw),           // Input signal
-.O(slow_clk    )           // Buff clock
+.I (slow_clk_raw),           // Input signal
+.O (slow_clk    )           // Buff clock
 );
 
 endmodule

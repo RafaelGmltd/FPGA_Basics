@@ -25,22 +25,27 @@ wire  [pointer_width - 1:0] rd_ptr = ext_rd_ptr [pointer_width - 1:0];
 logic [WIDTH-1:0] mem [DEPTH -1:0];
 
 always_ff@(posedge clk or posedge rst)
-    if(rst)
-      ext_wr_ptr       <= '0;
-    else if (push)
-    begin
-      ext_wr_ptr       <= ext_wr_ptr + 1'b1;
-      mem [wr_ptr]     <= wr_data;
-    end
-    
+begin
+  if(rst)
+    ext_wr_ptr       <= '0;
+  else if (push)
+  begin
+    ext_wr_ptr       <= ext_wr_ptr + 1'b1;
+    mem [wr_ptr]     <= wr_data;
+  end
+end
+
 always_ff@(posedge clk or posedge rst)
-    if(rst)
-      ext_rd_ptr       <= '0;
-    else if (pop)
-    begin
-      ext_rd_ptr       <= ext_rd_ptr + 1'b1;
-      rd_data          <= mem [rd_ptr];
-    end
+begin
+  if(rst)
+    ext_rd_ptr       <= '0;
+  else if (pop)
+  begin
+    ext_rd_ptr       <= ext_rd_ptr + 1'b1;
+    rd_data          <= mem [rd_ptr];
+  end
+end
+
 assign empty   =  (ext_rd_ptr == ext_wr_ptr);
 assign full    = ({~ext_wr_ptr[ pointer_width],ext_wr_ptr[ pointer_width-1:0]} == ext_rd_ptr);// {~MSB,LSB} == {MSB,LSB}
 //assign rd_data = mem [rd_ptr];

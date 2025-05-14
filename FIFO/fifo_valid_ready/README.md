@@ -1,6 +1,6 @@
-# Valid/Ready Protocol
+# *Valid/Ready Protocol*
 
-The **Valid/Ready protocol** is one of the most widely used interface protocols in digital logic design, especially for data transfers between modules in different clock domains or within System-on-Chip (SoC) architectures.
+The Valid/Ready protocol is one of the most widely used interface protocols in digital logic design, especially for data transfers between modules in different clock domains or within System-on-Chip (SoC) architectures.
 
 ### Signal Descriptions
 
@@ -28,7 +28,7 @@ The **Valid/Ready protocol** is one of the most widely used interface protocols 
    - The transmitter must not change the data on the bus while `ready = 0`.
    - It must keep the same data until `ready` goes high.
 
-# Why It's Better to Keep `ready` High by Default
+### Why It's Better to Keep `ready` High by Default
 
 The `valid/ready` handshake protocol is designed to ensure smooth and efficient data transfer between modules. Here's why keeping `ready = 1` by default is a best practice for receivers.
 
@@ -59,7 +59,7 @@ The `valid/ready` handshake protocol is designed to ensure smooth and efficient 
   - You need to **throttle** incoming data.
 
 
-# FIFO with Valid/Ready Protocol
+# *FIFO with Valid/Ready Protocol*
 
 In this setup, we wrap the FIFO with the **Valid/Ready** protocol. Here's how it works:
 
@@ -83,7 +83,7 @@ In this setup, we wrap the FIFO with the **Valid/Ready** protocol. Here's how it
   
 Thus, the FIFO facilitates data transfer by buffering and regulating the flow of data between the upstream and downstream components, ensuring that both can **synchronize** and **avoid overflow/underflow**.
 
-# Generating `push` and `pop` Signals Based on the Valid/Ready Protocol
+# *Generating `push` and `pop` Signals Based on the Valid/Ready Protocol*
 
 Now, based on the logic of how FIFO works when wrapped with the Valid/Ready protocol, let's define how the control signals **push** and **pop** are formed.
 
@@ -99,13 +99,13 @@ We can write to the FIFO (issue a `push`) only when two conditions are met:
 1. **Upstream asserts `valid = 1`** — this means the sender has valid data available.
 2. **The FIFO is not full (`!full`)** — there is space in the FIFO to accept new data.
 
-**Push Pop condition:**
+Push Pop condition:
 
 push = upstream_valid && !fifo_full;
 
 pop = downstream_ready && !fifo_empty;
 
 
-![FIFO valid/ready](validready.jpg)
+![FIFO valid/ready](FIFO_valid_ready.jpg)
 
 

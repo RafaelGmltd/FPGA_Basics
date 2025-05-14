@@ -4,18 +4,18 @@ module fifo_valid_ready
             DEPTH       = 8
 )
 (
-  input                 clk,
-  input                 rst,
+input                 clk,
+input                 rst,
   
  //- - - - - UPSTREAM - - - - - - - 
-  input                 up_valid,
-  output                up_ready,
-  input [WIDTH -1:0]    wr_data,
+input                 up_valid,
+output                up_ready,
+input [WIDTH -1:0]    wr_data,
 
  //- - - - - DOWNSTREAM - - - - - - - 
-  input                 down_ready,
-  output                down_valid,
-  output [WIDTH -1:0]   rd_data
+input                 down_ready,
+output                down_valid,
+output [WIDTH -1:0]   rd_data
 );
 
 wire fifo_push;
@@ -33,19 +33,19 @@ fifo_opt
 #(.WIDTH(WIDTH), .DEPTH(DEPTH))
 sub_sync_opt
 (
- .clk(clk),
- .rst(rst),
- .push(fifo_push),
- .pop(fifo_pop),
- .empty(fifo_empty),
- .full(fifo_full),
- .*
+.clk   (clk),
+.rst   (rst),
+.push  (fifo_push),
+.pop   (fifo_pop),
+.empty (fifo_empty),
+.full  (fifo_full),
+.*
 );
 
 always_ff@(posedge clk)
-  begin
-    $display("Time: %0t |fifo_empty: %0d   |fifo_full: %0d", 
-    $time, fifo_empty, fifo_full);
-    $display("_____________________");
-  end
+begin
+  $display("Time: %0t |fifo_empty: %0d   |fifo_full: %0d", 
+  $time, fifo_empty, fifo_full);
+  $display("_____________________");
+end
 endmodule
