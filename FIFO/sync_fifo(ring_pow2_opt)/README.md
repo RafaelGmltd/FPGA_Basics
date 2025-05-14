@@ -16,7 +16,7 @@ Here, the transmitter first indicates that it has data to send by asserting a va
 ### Two-Way Handshake (valid + ready)
 This is the most reliable method, especially in asynchronous or clock-crossing systems. The transmitter asserts valid when the data is ready, and the receiver asserts ready when it can accept data. Data is only transferred when both signals are high. This mechanism ensures safe and correct data transfer, even between modules running at different clock rates.
 
-## Buffered Transmission with Stalled Receiver and the Role of FIF
+## Buffered Transmission with Stalled Receiver and the Role of FIFO
 If the receiver temporarily stalls for some reason, the transmitter can continue sending data by storing it in a buffer, assuming the receiver will eventually resume and retrieve the accumulated data. This approach is particularly useful when the transmitter and receiver operate at slightly different speeds.
 
 You can think of the buffer like a water tank: the transmitter slowly fills it, and the receiver later scoops the data out quickly. However, this setup brings up several important challenges:
