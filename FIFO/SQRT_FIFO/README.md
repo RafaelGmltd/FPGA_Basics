@@ -18,17 +18,16 @@ To ensure synchronized output for all three values, the system uses FIFO bufferi
 
 ### Architecture
 
-###  `top_sqrt`
-> Iterative square root calculation unit using a step-by-step algorithm (e.g., non-restoring or digit-by-digit).
+`top_sqrt`
+ Iterative square root calculation unit using a step-by-step algorithm (e.g., non-restoring or digit-by-digit).
 
 ###  FIFO Buffers
-> Temporarily store early results until the third is ready; prevents data loss and ensures output alignment.
-
-###  `top_adder`
-> Adds three square root results once all are available.
+ Temporarily store early results until the third is ready; prevents data loss and ensures output alignment.
+`top_adder`
+ Adds three square root results once all are available.
 
 ###  Controller / FSM
-> Manages:
+ Manages:
 - Input/output handshake
 - FIFO write/read logic
 - Detection of result readiness
