@@ -4,8 +4,6 @@ I'm a second-year student at *UADE University* in Buenos Aires, Argentina, with 
 
 In this repository, I’m collecting *basic elements* that I've studied and continue to explore — inspired and guided by *open-source materials*, *free online courses*, *technical articles*, *books*, and of course, the *official documentation from Xilinx* (Product Guides and User Guides).
 
-The amount of high-quality, freely available content is enormous — my goal is to process it thoughtfully and consistently. This project is part of that effort.
-
 Many of the examples here are *adapted from public sources* and used as learning material. In some cases, I’ve tried to *simplify, clean up, or slightly improve* the original code to make it more understandable and practical.
 
 For example, I’ve used parts of the course "Digital Logic Synthesis School" , the GitHub repository by Yury Panchul, and examples from the book *"FPGA Prototyping by Verilog Examples"* by Pong P. Chu.
