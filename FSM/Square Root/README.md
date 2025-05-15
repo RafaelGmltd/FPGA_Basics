@@ -1,7 +1,6 @@
 
-# Square Root Algorithm Description (FSM-based Implementation)
-# 
-
+# *Square Root Algorithm Description (FSM-based Implementation)*
+ 
  This project demonstrates the use of a Finite State Machine (FSM)
  to compute the integer part of the square root of a 16-bit number.
 
@@ -23,9 +22,7 @@
 
  Instead of brute-force checking all values from 0 to 255,
  the algorithm checks each bit of the result, starting from the MSB:
-     bit = 1 << 7 = 128
-# 
-
+ bit = 1 << 7 = 128
 
 ## Let's walk through an example using the number 27
 
@@ -45,7 +42,6 @@
 
 ### The FSM is now ready to begin computation.
 
-# 
 ## Clock Cycle 2: FSM in CALC state
 
 #### FSM starts computing for the first time.
@@ -82,9 +78,7 @@
      x_reg         = 27
      state         = CALC
 
-# 
 ## Clock Cycle 3: FSM in CALC state
-
 
 ### FSM tests the next bit: bit = 64
 
@@ -111,9 +105,7 @@
      x_reg         = 27
      state         = CALC
 
-# 
 ## Clock Cycle 4: FSM in CALC state
-
 
 ### FSM tests the next bit: bit = 32
 
@@ -140,9 +132,7 @@
      x_reg         = 27
      state         = CALC
 
-#
 ## Clock Cycle 5: FSM in CALC state
-
 
 ### FSM tests the next bit: bit = 16
 
@@ -169,9 +159,7 @@
      x_reg       = 27
      state       = CALC
 
-# 
 ## Clock Cycle 6: FSM in CALC state
-
 
 ### FSM tests the next bit: bit = 8
 
@@ -198,9 +186,7 @@
      x_reg         = 27
      state         = CALC
 
-# 
 ## Clock Cycle 7: FSM in CALC state
-
 
 ### FSM tests the next bit: bit = 4
 
@@ -227,7 +213,6 @@
      x_reg         = 27
      state         = CALC
 
-# 
 ## Clock Cycle 8: FSM in CALC state
 
 ### FSM tries to include the next bit: bit = 2
@@ -256,9 +241,7 @@
      x_reg         = 27
      state         = CALC
 
-# 
 ## Clock Cycle 9: FSM in CALC state
-
 
 ### FSM checks the least significant bit: bit = 1
 
@@ -287,8 +270,7 @@
 ### Final result built bit-by-bit from MSB to LSB:
      √27 ≈ 5.19 → floor(√27) = 5 
 
-# 
-# Summary: Bitwise Square Root via FSM
+## Summary: Bitwise Square Root via FSM
 
 
  We scan bits from most significant to least significant (top-down).
@@ -298,14 +280,14 @@
     This approach is similar to "bitwise approximation" —
     like a binary search, but done bit by bit.
 
-# Latency:
+## Latency:
      - 1 clock for START
      - 8 clocks for checking all bits (from 1<<7 to 1)
      - 1 clock for DONE
 
  Total: 9–10 cycles depending on FSM design
 
-# Nested radicals
+## Nested radicals
 
 ![Nested radicals](nested_radicals.png)
 
