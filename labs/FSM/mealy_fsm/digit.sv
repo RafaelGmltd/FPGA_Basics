@@ -11,12 +11,14 @@ output logic            toggle_digit
 logic [W_CNT-1:0]       cnt;
 
 always_ff@(posedge clk)
-  if(cnt == (PERIOD-1))
-  begin
-    cnt                 <= '0;
-    toggle_digit        <= ~toggle_digit; 
-  end
-  else
-    cnt                 <= cnt+1;
+begin
+if(cnt == (PERIOD-1))
+begin
+  cnt                 <= '0;
+  toggle_digit        <= ~toggle_digit; 
+end
+else
+  cnt                 <= cnt+1;
+end
  
 endmodule

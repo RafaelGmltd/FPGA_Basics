@@ -59,7 +59,7 @@ sub_shift_reg
 //   );
   
 mealy_fsm sub_mealy_fsm
-(.en         (         enable),
+(.en        (         enable),
 .in_mealy   (         fsm_in),
 .out_mealy  (  mealy_fsm_out),
 .state_mealy(mealy_state_out),
@@ -72,34 +72,35 @@ digit sub_digit
 );
   
 
-logic [    7:0]            abcdefgh_fsm_out, abcdefgh_state;
-always_comb begin
-  if (toggle) 
-  begin
-    abcdefgh               = abcdefgh_fsm_out; // digit 0
-    digit                  = 4'b0001;        // on
-  end 
-  else begin
-    abcdefgh               = abcdefgh_state; // digit 1
-    digit                  = 4'b0010;          // on
-  end
+logic [7    :0]            abcdefgh_fsm_out, abcdefgh_state;
+always_comb 
+begin
+if (toggle) 
+begin
+  abcdefgh               = abcdefgh_fsm_out; // digit 0
+  digit                  = 4'b0001;        // on
+end 
+else begin
+  abcdefgh               = abcdefgh_state; // digit 1
+  digit                  = 4'b0010;          // on
+end
 end
 
 //Mealy FSM
 always_comb begin
 //out
 case (mealy_fsm_out)
- 1'b0: abcdefgh_fsm_out      = 8'b1111_1100;
- 1'b1: abcdefgh_fsm_out      = 8'b0110_0000;
- default: abcdefgh_fsm_out   = 8'b0000_0000;
- endcase
+  1'b0: abcdefgh_fsm_out      = 8'b1111_1100;
+  1'b1: abcdefgh_fsm_out      = 8'b0110_0000;
+  default: abcdefgh_fsm_out   = 8'b0000_0000;
+endcase
 //state
 case (mealy_state_out)
- 2'b00:   abcdefgh_state     = 8'b1111_1101;
- 2'b01:   abcdefgh_state     = 8'b0110_0001;
- 2'b10:   abcdefgh_state     = 8'b1101_1011;
- 2'b11:   abcdefgh_state     = 8'b1111_0011;
- default: abcdefgh_state     = 8'b0000_0000;
+  2'b00:   abcdefgh_state     = 8'b1111_1101;
+  2'b01:   abcdefgh_state     = 8'b0110_0001;
+  2'b10:   abcdefgh_state     = 8'b1101_1011;
+  2'b11:   abcdefgh_state     = 8'b1111_0011;
+  default: abcdefgh_state     = 8'b0000_0000;
 endcase
 end
 

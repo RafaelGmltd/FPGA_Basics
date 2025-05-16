@@ -21,12 +21,13 @@ state_fsm;
 state_fsm state, next_state;
 
 //State register
-    always_ff @ (posedge clk or posedge rst)
-        if (rst)
-            state <= S1;
-        else if (en)
-            state <= next_state;
- // Next state logic       
+always_ff @ (posedge clk or posedge rst)
+if (rst)
+  state <= S1;
+else if (en)
+  state <= next_state;
+  
+// Next state logic       
     always_comb
     begin
         next_state = state;
@@ -56,13 +57,13 @@ state_fsm state, next_state;
         endcase
     end
 
-    // Output logic based on current state
-    assign out_moore[1] =   (state == S0 & (in_moore == 2'd0 | 2'd1))|
-                            (state == S2 & (in_moore == 2'd3 | 2'd0))| 
-                            (state == S4 & (in_moore == 2'd0 | 2'd3));
+// Output logic based on current state
+assign out_moore[1] =   (state == S0 & (in_moore == 2'd0 | 2'd1))|
+                        (state == S2 & (in_moore == 2'd3 | 2'd0))| 
+                        (state == S4 & (in_moore == 2'd0 | 2'd3));
     
-    assign out_moore[0] =   (state == S2 & (in_moore == 2'd3 | 2'd0))| 
-                            (state == S4 & (in_moore == 2'd0 | 2'd3) );
-    assign state_moore  =    state;                       
+assign out_moore[0] =   (state == S2 & (in_moore == 2'd3 | 2'd0))| 
+                        (state == S4 & (in_moore == 2'd0 | 2'd3) );
+assign state_moore  =    state;                       
 
 endmodule

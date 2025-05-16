@@ -42,15 +42,14 @@ wire button_on             = |key;
 logic [W-1:0] shift_reg;
 
 always_ff @(posedge clk or posedge rst)
-    if(rst)
-      shift_reg <= '1 ;                             
-
-    else if (enable & ~sw[1] & sw[2])
-       shift_reg <= {shift_reg[W-2:0], button_on};  //left
-    else if (enable & sw[1] & sw[2])
-       shift_reg = {button_on,shift_reg[W-1:1]};    //right 
-    else if (enable & ~sw[2])
-       shift_reg = {shift_reg[0],shift_reg[W-1:1]}; //ring  
+if(rst)
+  shift_reg <= '1 ;                             
+else if (enable & ~sw[1] & sw[2])
+  shift_reg <= {shift_reg[W-2:0], button_on};  //left
+else if (enable & sw[1] & sw[2])
+  shift_reg = {button_on,shift_reg[W-1:1]};    //right 
+else if (enable & ~sw[2])
+  shift_reg = {shift_reg[0],shift_reg[W-1:1]}; //ring  
 
 assign led = shift_reg;
     

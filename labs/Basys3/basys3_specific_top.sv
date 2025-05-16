@@ -2,7 +2,7 @@ module basys3_specific_top
 #(
     parameter CLK       = 100,
               PIXEL_CLK = 25,
-              KEY       = 2,
+              KEY       = 5,
               SW        = 16,
               LED       = 16,
               DIGIT     = 4,
@@ -53,20 +53,19 @@ wire [w_lab_sw-1:0]lab_sw   = sw[w_lab_sw-1:0];
 wire   [        7:0]    abcdefgh;
 wire   [        7:0]    digit;
 
-assign {seg[0], seg[1], seg[2], seg[3],
-        seg[4], seg[5], seg[6],dp } = ~abcdefgh;
+assign {seg[0], seg[1], seg[2], seg[3], seg[4], seg[5], seg[6],dp } = ~abcdefgh;
 assign an = ~digit;
 
 // - - - - - - Graphics - - - - - - - - - - - -  
 
-wire                 display_on;
+wire                      display_on;
 
 wire [ORDINATE     - 1:0] x;
 wire [ABSCISSA     - 1:0] y;
 
-wire [RED        - 1:0] red;
-wire [GREEN    - 1:0] green;
-wire [BLUE      - 1:0] blue;
+wire [RED          - 1:0] red;
+wire [GREEN        - 1:0] green;
+wire [BLUE         - 1:0] blue;
 
 assign vgaRed   = display_on ? red   : '0;
 assign vgaGreen = display_on ? green : '0;
