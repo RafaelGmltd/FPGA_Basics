@@ -1,4 +1,4 @@
-module uart_phy_rx
+module uart_rx
 (
 input             clk_i,
 input             rst_i,
