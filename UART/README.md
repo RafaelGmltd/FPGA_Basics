@@ -121,3 +121,12 @@ I also didn’t fully grasp all this on the first try — it's a lot of subtle t
 
 ![ASMD chart of a UART receiver](ASMD.jpg)
 
+### UART RX
+
+![UART RX](UART_rx.jpg)
+
+### UART RX
+
+![UART TX](UART_tx.jpg)
+
+
