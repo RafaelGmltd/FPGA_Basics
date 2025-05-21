@@ -40,8 +40,8 @@ wait(!rst);
     @(posedge clk);
     A <= $random();
     B <= $random();
-    // A <= $random(10,200);
-    // B <= $random(0,10  );
+    // A <= $urandom_range(10,200);
+    // B <= $urandom_range(0,10  );
   end
 $finish();
 end
