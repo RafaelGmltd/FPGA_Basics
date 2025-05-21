@@ -32,9 +32,9 @@ logic [CNT-1:0] cnt;
 always_ff @(posedge clk or posedge rst) 
 begin
     if(rst)
-      cnt = '0;
+      cnt <= '0;
     else 
-      cnt = cnt + 1'b1;   
+      cnt <= cnt + 1'b1;   
 end
 
     assign led = cnt[$left(cnt)-:4];
