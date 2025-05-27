@@ -2,7 +2,6 @@
 `default_nettype none
 module uart_rx
 #(
-
   parameter OVERSAMPLE_RATE =          16, // Common choices: 8 or 16
   parameter NUM_BITS        =          11, // 1 start bit, 8 databit, 1 parity bit, 1 stop bit
   parameter PARITY_ON       =           1, // 0: Parity disabled. 1: Parity enabled.
@@ -22,7 +21,7 @@ module uart_rx
 );
 
 //- - - - - - -  - - - - - -  - - - - - -  - - - - - - - - - -  - - - - - -  - - - - - -  - - -  - - - -  - - - - - -  
-// Тут временный регистр со значениями с TX 
+// Тут временный регистр со значениями с RX 
 logic [NUM_BITS -1       :0]      rxd_buf;         // временый регистр куда все биты с TX сохранять будем 
 logic [$clog2(NUM_BITS)-1:0]      rxd_buf_cnt;     // это счетчик считанных битов сколько битов записали
 //- - - - - - -  - - - - - -  - - - - - -  - - - - - - - - - -  - - - - - -  - - - - - -  - - -  - - - -  - - - - - -  
