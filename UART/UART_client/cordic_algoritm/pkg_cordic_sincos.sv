@@ -1,27 +1,3 @@
-//
-// File:        pkg_cordic_sincos.sv
-// Author:      Grant Yu
-// Date:        03/2021
-// Description: Data package for the cordic_sincos calculation module. Includes
-//              gain compensation factor, K, for up to 48 iterations, an arctan look-up
-//              table, fixed-point values of pi and its multiples, and a rounding function
-//
-// Copyright (C) 2021, Grant Yu
-//
-// This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//    You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-//
-
 package pkg_cordic_sincos;
 
 // In this package, we have:
@@ -29,14 +5,15 @@ package pkg_cordic_sincos;
 //	2. Look-uptable for arctan values as a function of iteration #
 //	3. Values of pi/2, pi, 3pi/2, and 2pi
 
-parameter MAX_STAGES = 48;
+parameter MAX_STAGES  = 48;
 parameter MAX_D_WIDTH = 48;
 
 // K look-up table (gain compensation value for a certain # of iters)
 //
-// The 2 MSBs are integer bits; rest are fractional.Q2.46
+// The 2 MSBs are integer bits; rest are fractional.(Q2.46)
 
-parameter bit signed [MAX_D_WIDTH-1:0] K[0:MAX_STAGES-1] = {
+parameter bit signed [MAX_D_WIDTH-1:0] K[0:MAX_STAGES-1] = 
+{
     48'h2d413cccfe78,
     48'h287a26c49092,
     48'h2744c374daf4,
@@ -59,6 +36,7 @@ parameter bit signed [MAX_D_WIDTH-1:0] K[0:MAX_STAGES-1] = {
     48'h26dd3b6a10f2,
     48'h26dd3b6a10de,
     48'h26dd3b6a10d9,
+// 0.6072529350088871
     48'h26dd3b6a10d8,
     48'h26dd3b6a10d8,
     48'h26dd3b6a10d8,
@@ -89,9 +67,10 @@ parameter bit signed [MAX_D_WIDTH-1:0] K[0:MAX_STAGES-1] = {
 
 // Arctan lookup table
 //
-// The 2 MSBs are integer bits; rest are fractional Q2.46
+// The 2 MSBs are integer bits; rest are fractional (Q2.46)
 
-parameter bit signed [MAX_D_WIDTH-1:0] ATAN[0:MAX_STAGES-1] = {
+parameter bit signed [MAX_D_WIDTH-1:0] ATAN[0:MAX_STAGES-1] = 
+{
     48'h3243f6a8885a,
     48'h1dac670561bb,
     48'h0fadbafc9640,
@@ -142,7 +121,9 @@ parameter bit signed [MAX_D_WIDTH-1:0] ATAN[0:MAX_STAGES-1] = {
     48'h000000000001
 };
 
-// Angle correction constants: pi/2, pi/ 3pi/2, 2pi, generated on MATLAB Q4.44
+// Angle correction constants: pi/2, pi/ 3pi/2, 2pi, generated on MATLAB (Q4.44)
+//Вот тут обрати внимание что в отличии от параметров выше Q2.46 тут  Q 4.44 потому что в
+// модуле препроцесс значения пи работают с входным углом который Q 4.44 тоже 
 parameter bit signed [MAX_D_WIDTH-1:0] PI_DIV_2 		= 48'h1921fb54442d;
 parameter bit signed [MAX_D_WIDTH-1:0] PI 				= 48'h3243f6a8885a;
 parameter bit signed [MAX_D_WIDTH-1:0] PI_MULT_3_DIV_2  = 48'h4b65f1fccc87;
@@ -157,10 +138,3 @@ function bit signed [MAX_D_WIDTH-1:0] round ( input bit signed [MAX_D_WIDTH-1:0]
 endfunction
 
 endpackage
-
-
-
-
-
-
-  

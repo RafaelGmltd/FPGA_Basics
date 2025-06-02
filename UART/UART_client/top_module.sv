@@ -154,7 +154,7 @@ i_uart_tx_msg
   .cordic_done_i      (cordic_done      ),   
 // to uart tx
   .txd_byte_o         (txd_byte         ),
-  .txd_byte_valid_o   (txd_byte_valid   )
+  .txd_byte_vld_o     (txd_byte_vld     )
 );
 
 logic        fifo_wr_en, 
@@ -164,7 +164,7 @@ logic        fifo_wr_en,
 logic [7 :0] fifo_wr_data, 
              fifo_rd_data;
 
-assign fifo_wr_en   = ( (txd_byte_valid) && (!fifo_full) );
+assign fifo_wr_en   = ( (txd_byte_vld) && (!fifo_full) );
 assign fifo_wr_data = txd_byte;
 
 // FIFO between TX MSG and TX

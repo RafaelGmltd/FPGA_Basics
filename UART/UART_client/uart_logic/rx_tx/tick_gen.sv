@@ -1,13 +1,14 @@
+`default_nettype none
 module tick_gen
 #(
 parameter FREQ     = 100000000,
 parameter BAUDRATE = 921600
 )
 (
-input        clk_i,    
-input        rst_i,
-input [1 :0] rate_i,
-output logic tick_o
+input wire        clk_i,    
+input wire        rst_i,
+input wire [1 :0] rate_i,
+output logic      tick_o
 );
     
 localparam real TICK_INC_REAL_1 = ((4294967296.0 * 16.0 * BAUDRATE) / (FREQ));
@@ -52,6 +53,5 @@ tick_o <= tick_cnt[32];
         2'd3 : tick_inc <= TICK_INC_INT_4;
     endcase
 end
-
-    
-endmodule 
+ 
+endmodule

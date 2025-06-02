@@ -50,11 +50,9 @@ def main():
     try:
         while True:
 
-            command = input("\nEnter command (1-4):\n \
+            command = input("\nEnter command (1-2):\n \
             (1- Single angle)\n \
-            (2- Disable)\n \
-            (3- Enable)\n \
-            (4- Echo Test Mode) ")
+            (2- Echo Test Mode) ")
     # тут другой except смотри ниже если введешь не int то перебросит на except ValueError и выйдет сообщение  
             try:
 
@@ -155,74 +153,8 @@ def main():
                     else:
                         print("\nCRC-8 of received message does not pass.")
 
-                # Disable command
-                elif command == 2:
-
-                    # Construct message
-                    packet = bytearray()
-                    packet.append(0x5a)
-                    packet.append(0xe1)
-                    packet.append(crc_8(packet))
-                    
-                    # Print message
-                    print("\nSending message: ")
-                    print("\tHeader: 0x" + str(format(packet[0], '02x')))
-                    print("\tCmd:    0x" + str(format(packet[1], '02x')))
-                    print("\tCRC-8:  0x" + str(format(packet[-1], '02x')))
-
-                    # Send message
-                    ser.write(packet)
-
-                    # Read received message
-                    bytes_back = ser.read(3)
-
-                    # Print received message
-                    print("\nReceived message: ")
-                    print("\tHeader: 0x" + str(format(bytes_back[0], '02x')))
-                    print("\tCmd:    0x" + str(format(bytes_back[1], '02x')))
-                    print("\tCRC-8:  0x" + str(format(bytes_back[-1], '02x')))
-
-                    # CRC-8 check
-                    if crc_8(bytes_back) == 0:
-                        print("\nCRC-8 of received message passes.")
-                    else:
-                        print("\nCRC-8 of received message does not pass.")
-
-                # Enable command
-                elif command == 3:
-                    
-                    # Construct message
-                    packet = bytearray()
-                    packet.append(0x5a)
-                    packet.append(0xe2)
-                    packet.append(crc_8(packet))
-                    
-                    # Print message
-                    print("\nSending message: ")
-                    print("\tHeader: 0x" + str(format(packet[0], '02x')))
-                    print("\tCmd:    0x" + str(format(packet[1], '02x')))
-                    print("\tCRC-8:  0x" + str(format(packet[-1], '02x')))
-
-                    # Send message
-                    ser.write(packet)
-
-                    # Read received message
-                    bytes_back = ser.read(3)
-                    
-                    # Print received message
-                    print("\nReceived message: ")
-                    print("\tHeader: 0x" + str(format(bytes_back[0], '02x')))
-                    print("\tCmd:    0x" + str(format(bytes_back[1], '02x')))
-                    print("\tCRC-8:  0x" + str(format(bytes_back[-1], '02x')))
-
-                    # CRC-8 check
-                    if crc_8(bytes_back) == 0:
-                        print("\nCRC-8 of received message passes.")
-                    else:
-                        print("\nCRC-8 of received message does not pass.")
-
                 # Echo test command
-                elif command == 4:
+                elif command == 2:
 
                     testbyte = input("\nEnter test character: ")
                     ser.write(testbyte.encode("utf-8"))
