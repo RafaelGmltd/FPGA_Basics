@@ -7,7 +7,7 @@ as long as all of the modules used belong to the same project (so the compiler k
 The code for one module is not written inside another module's body (Code for different modules are not nested)
 */
 
-module add_1
+module adder
 (
 input        a,
 input        b,
