@@ -4,7 +4,6 @@ module top_module
   parameter OVERSAMPLE_RATE = 16,  
   parameter FREQ            = 100_000_000,
   parameter BAUDRATE        = 921_600,
-  parameter NUM_BITS        = 11,           // 1 start bit, 8 databit, 1 parity bit, 1 stop bit
   parameter PARITY_ON       =  1,
   parameter PARITY_EO       =  1
 
@@ -25,9 +24,21 @@ output wire        tx_o,
 output wire [2 :0] fsm_state_rx
 
 );
-
+//-------------------------------------------------------------------------------------------------
+                               //Async reset
 // Reset synchronizer for system стабилизируем сигнал rst если он от кнопки идет ввыравниваем его по такту
 // в течении двух тактов придет
+// rst_i — асинхронный сброс по 1 (потому что в @(posedge rst_i)).
+// При срабатывании rst_i регистр сбрасывается мгновенно (асинхронно).
+// При отпускании rst_i на каждом такте в sync_reg сдвигается 1 в старший бит.
+// то есть смысл в том что если мы системный ресет будем использовать в разные модули а у меня их 10 - 11 
+// то есть вероятность что этот ресет не везде одновременно отработает так?
+// а тут мы что делаем когда системный ресет а системный ресет на кнопку заведен
+// срабатывает мы в регистр из двух битт загружаем нули  затем мы кнопку отпустили системный ресет 0 стал 
+// теперь выполняеться элсе на первом такте 1 в 0 индекс загружаеться а на втором такте эта 1 из 0 индекса идет 
+// в индекс номер 1 а индекс номер один от этого регистра это глобальный ресет для всех модулей так получаеться
+// sync_rst_n становится 1 через два такта после сброса.
+
 logic [1 :0] sync_reg;
 logic        sync_rst;
 
@@ -39,14 +50,10 @@ else
 
 assign sync_rst = sync_reg[1]; // на второй такт придет
     
+//-------------------------------------------------------------------------------------------------
+                               //TICK to RX and TX
+
 logic tick;
-
-logic [7 :0]       rxd_byte;
-logic              rxd_vld, 
-                   rxd_err;
-assign rxd_err_o = rxd_err; 
-
-    
 tick_gen 
 #(
   .FREQ            (FREQ    ),
@@ -59,11 +66,16 @@ i_tick
   .rate_i          (2'b00    ),
   .tick_o          (tick     ) 
 );
-    
+//-------------------------------------------------------------------------------------------------
+                               //from PYTHON client to RX to RX MSG   
+logic [7 :0]       rxd_byte;
+logic              rxd_vld,rxd_err;
+assign rxd_err_o = rxd_err; 
+
 uart_rx
 #(
   .OVERSAMPLE_RATE (OVERSAMPLE_RATE),
-  .NUM_BITS        (NUM_BITS       ),
+  .NUM_BITS        (11             ),
   .PARITY_ON       (PARITY_ON      ),
   .PARITY_EO       (PARITY_EO      )
 ) 
@@ -82,7 +94,8 @@ i_rx
   .fsm_state_rx    (fsm_state_rx   )
 
 );
-
+//-------------------------------------------------------------------------------------------------
+                               //RX MSG to CORDIC and TX_MSG 
 logic [7:0]  cmd_reg;
 logic        cmd_reg_vld;
 logic        rxd_msg_err;
@@ -97,36 +110,35 @@ assign rxd_msg_err_o    = rxd_msg_err;
 uart_rx_msg 
 i_uart_rx_msg  
 (
-  .clk_i           (clk_i         ),
-  .rst_i           (rst_i         ),    
+  .clk_i            (clk_i          ),
+  .rst_i            (sync_rst       ),    
 // in from uart_rx
-  .rxd_byte_i      (rxd_byte      ),
-  .rxd_vld_i       (rxd_vld       ),
-  .rxd_err_i       (rxd_err       ),   
+  .rxd_byte_i       (rxd_byte       ),
+  .rxd_vld_i        (rxd_vld        ),
+  .rxd_err_i        (rxd_err        ),   
 // out to uart_tx_msg
-  .cmd_reg_o       (cmd_reg       ),
-  .cmd_reg_vld_o   (cmd_reg_vld   ),
-  .rxd_msg_err     (rxd_msg_err   ),
+  .cmd_reg_o        (cmd_reg        ),
+  .cmd_reg_vld_o    (cmd_reg_vld    ),
+  .rxd_msg_err      (rxd_msg_err    ),
 // out to cordic
-  .cordic_start_o   (cordic_start  ),
-  .cordic_theta_o   (cordic_theta  ),
-  .cordic_pipe_en_o (cordic_pipe_en)
+  .cordic_start_o   (cordic_start   ),
+  .cordic_theta_o   (cordic_theta   ),
+  .cordic_pipe_en_o (cordic_pipe_en )
 );
-
+//-------------------------------------------------------------------------------------------------
+                               //CORDIC to TX_MSG
 logic         cordic_done;
-logic [47 :0] cordic_sin_theta, 
-              cordic_cos_theta;
+logic [47 :0] cordic_sin_theta, cordic_cos_theta;
 
-// CORDIC
 cordic_sincos 
 #(
-  .STAGES     (48),
-  .BITS       (48)
+  .STAGES          (48                 ),
+  .BITS            (48                 )
 ) 
 i_cordic_sincos 
 (
   .clk_i.          (clk_i              ),
-  .rst_i           (rst_i              ),
+  .rst_i           (sync_rst           ),
   .pipeline_en_i   (cordic_pipeline_en ),
   .start_i         (cordic_start       ),
   .theta_i         (cordic_theta       ),            
@@ -134,16 +146,16 @@ i_cordic_sincos
   .sin_theta_o     (cordic_sin_theta   ),  
   .cos_theta_o     (cordic_cos_theta   )   
 ); 
-
+//-------------------------------------------------------------------------------------------------
+                               //TX_MSG to FIFO
 logic [7 :0]  txd_byte;
 logic         txd_byte_valid;
 
-// TX MSG
 uart_tx_msg 
 i_uart_tx_msg 
 (
-  .clk_i           (clk_i            ),
-  .rst_i           (rst_i            ),    
+  .clk_i              (clk_i            ),
+  .rst_i              (sync_rst          ),    
 // from uart rx msg
   .cmd_reg_i          (cmd_reg          ),
   .cmd_vld_i          (cmd_reg_vld      ),
@@ -152,31 +164,27 @@ i_uart_tx_msg
   .cordic_sin_theta_i (cordic_sin_theta ),
   .cordic_cos_theta_i (cordic_cos_theta ),
   .cordic_done_i      (cordic_done      ),   
-// to uart tx
+// to FIFO
   .txd_byte_o         (txd_byte         ),
   .txd_byte_vld_o     (txd_byte_vld     )
 );
-
-logic        fifo_wr_en, 
-             fifo_rd_en, 
-             fifo_full, 
-             fifo_empty;
-logic [7 :0] fifo_wr_data, 
-             fifo_rd_data;
+//-------------------------------------------------------------------------------------------------
+                               //FIFO to TX
+logic        fifo_wr_en, fifo_rd_en, fifo_full, fifo_empty;
+logic [7 :0] fifo_wr_data, fifo_rd_data;
 
 assign fifo_wr_en   = ( (txd_byte_vld) && (!fifo_full) );
 assign fifo_wr_data = txd_byte;
 
-// FIFO between TX MSG and TX
 sync_fifo 
 #(
-  .WIDTH  (8),
-  .DEPTH  (64)
+  .WIDTH           (8            ),
+  .DEPTH           (64           )
 ) 
 i_sync_fifo
 (
   .clk_i           (clk_i        ),
-  .rst_i           (rst_i        ),
+  .rst_i           (sync_rst     ),
   .wr_en_i         (fifo_wr_en   ),
   .rd_en_i         (fifo_rd_en   ),
   .wr_data_i       (fifo_wr_data ),
@@ -184,24 +192,24 @@ i_sync_fifo
   .full_o          (fifo_full    ),
   .empty_o         (fifo_empty   )
 );
-
-// UART TX
+//-------------------------------------------------------------------------------------------------
+                               //TX to PYTHON client
 uart_tx 
 #(
   .OVERSAMPLE_RATE (OVERSAMPLE_RATE),
-  .NUM_BITS        (NUM_BITS       ),
+  .NUM_BITS        (8              ),
   .PARITY_ON       (PARITY_ON      ),
   .PARITY_EO       (PARITY_EO      )
 ) 
 i_uart_tx
 (
-  .clk_i,
-  .rst_i           (rst_i        ),
-  .tick_i          (tick         ),
-  .fifo_empty_i    (fifo_empty   ),
-  .fifo_rd_data_i  (fifo_rd_data ),
-  .fifo_rd_en_o    (fifo_rd_en   ),
-  .tx_o            (tx_o         )
+  .clk_i           (clk_i          ),
+  .rst_i           (sync_rst       ),
+  .tick_i          (tick           ),
+  .fifo_empty_i    (fifo_empty     ),
+  .fifo_rd_data_i  (fifo_rd_data   ),
+  .fifo_rd_en_o    (fifo_rd_en     ),
+  .txd_o           (txd_o          )
   );
 
 endmodule
