@@ -122,8 +122,8 @@ parameter bit signed [MAX_D_WIDTH-1:0] ATAN[0:MAX_STAGES-1] =
 };
 
 // Angle correction constants: pi/2, pi/ 3pi/2, 2pi, generated on MATLAB (Q4.44)
-//Вот тут обрати внимание что в отличии от параметров выше Q2.46 тут  Q 4.44 потому что в
-// модуле препроцесс значения пи работают с входным углом который Q 4.44 тоже 
+// Note here that unlike the parameters above which are in Q2.46, this one is in Q4.44 because
+// in the preprocessor module, the π values work with the input angle, which is also in Q4.44.
 parameter bit signed [MAX_D_WIDTH-1:0] PI_DIV_2 		= 48'h1921fb54442d;
 parameter bit signed [MAX_D_WIDTH-1:0] PI 				= 48'h3243f6a8885a;
 parameter bit signed [MAX_D_WIDTH-1:0] PI_MULT_3_DIV_2  = 48'h4b65f1fccc87;

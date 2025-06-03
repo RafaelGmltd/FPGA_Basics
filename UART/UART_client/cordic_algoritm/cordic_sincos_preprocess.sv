@@ -89,23 +89,27 @@ always_ff @(posedge clk_i)
     sign_p2   <= sign_w2;
   end
     
-  // Assign preprocessing outputs (ready for the main CORDIC stages!)
-// Тут по классике как ордик синкос работает:
+// Assign preprocessing outputs (ready for the main CORDIC stages!)
 // X(0) = cos = K 
 // Y(0) = sin = 0
-// Z(0) = наш угол отмасштабированый в вид Q2.46
+// Z(0) = angle is scaled in Q2.46 fixed-point format
 assign valid_o    = valid_p2;
 assign sign_o     = sign_p2;
 assign cos_o      = round(K[STAGES-1], BITS) >>> (MAX_D_WIDTH - BITS);
 assign sin_o      = '0;
-//Вот тут ВАЖНО зачем этот сдвиг делаем потому что параметры с пакеджа углы и значния К они вида Q2.46 а 
-// угол входной с питона Q4.44 поэтому надо сдвинуться на два битоа влево чтобы стало Q2.46
-// по сути если у тебя входной угод был 60 например то питон его в Q 4.44 -> это в значит 4 бита на целую часть 44 на дробную
-// 0001.0000 1100 0001 0101 0010 0011 1000 0010 1101 0111 0011 в радианнах 1.0471975511965752 в градусах 59.999999999998714 °
-// мы в этомодуле это входное значение нормализуем с пи они тоже Q4.44 и в след модуль нам его в виде Q2.46 надо подать так как с табличными
-// значениями будет работатть а они Q2.46 поэтому << 2 и получиться
-// 01.00 0011 0000 0101 0100 1000 1110 0000 1011 0101 1100 1100  в радианах 1.0471975511965752 в градусах 59.999999999998714 °
-// по сути все тоже самое просто мы для дробной части два дополнительных бита добавили и сравняли масштаб с табличными данными К и atan
+// IMPORTANT: Why do we do this shift? Because the package parameters for angles and K values are in Q2.46 format,
+// while the input angle from Python is in Q4.44 format. Therefore, we need to shift left by 2 bits to convert Q4.44 to Q2.46.
+// For example, if the input angle is 60 degrees, Python represents it in Q4.44:
+// 0001.0000 1100 0001 0101 0010 0011 1000 0010 1101 0111 0011
+// which equals approximately 1.0471975511965752 radians (60 degrees).
+// In this module, we normalize this input angle with π (which is also in Q4.44).
+// The next module expects the angle in Q2.46 format to work correctly with the lookup tables,
+// which are in Q2.46. Thus, shifting left by 2 bits aligns the scale.
+// After shifting left by 2 bits, the value becomes:
+// 01.00 0011 0000 0101 0100 1000 1110 0000 1011 0101 1100 1100
+// which is still 1.0471975511965752 radians (60 degrees).
+// Essentially, it's the same value, but we added two extra bits for the fractional part
+// to match the scale of the lookup tables for K and arctan values.
 assign theta_o    = theta_p2 << 2;
-// Все эт значения превычисленные идут каждый в свой массив в [0] индекс в модуле sincos  
+  
 endmodule

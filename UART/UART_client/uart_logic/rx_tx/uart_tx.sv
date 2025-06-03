@@ -14,18 +14,16 @@ module uart_tx
   input wire  [NUM_BITS-1:0] fifo_rd_data_i,
   output wire                fifo_rd_en_o,
   output logic               txd_o
+
   );
 
 // Parity even/odd encoding
 localparam EVEN_PAR = 0;
 localparam ODD_PAR  = 1;
 
-//debug
-logic [3 :0] byte_cntr;
-
-
 // TX byte register
-logic [NUM_BITS +2:0] txd_byte;
+logic [NUM_BITS +2:0] tx_byte;
+
 // Byte index register
 logic [3:0] idx;
 //Parity bit
@@ -44,16 +42,15 @@ typedef enum logic [1 :0]
 state_t;
 state_t state;
 
-assign txd_o = txd_byte[0];  
+assign txd_o = tx_byte[0];  
 assign fifo_rd_en_o = (!fifo_empty_i) && state==TX_IDLE;  
 assign parity_bit = (PARITY_EO == EVEN_PAR) ? ^fifo_rd_data_i : ~^fifo_rd_data_i;
 
 always_ff @(posedge clk_i)
 if (rst_i) 
 begin
-  txd_byte           <= 11'b111_1111_1111;
+  tx_byte           <= 11'b111_1111_1111;
   idx               <= '0;
-//  tx_o              <= 1'b1;
   state             <= TX_IDLE;
   ticks_cnt         <= '0;
 end 
@@ -71,7 +68,7 @@ begin
 //-------------------------------------------------------------------------------------------------   
     TX_GET_DATA: 
     begin 
-      txd_byte     <= {1'b1, parity_bit, fifo_rd_data_i, 1'b0};
+      tx_byte      <= {1'b1, parity_bit, fifo_rd_data_i, 1'b0};
       state        <= TX_DATA;  
     end
 //-------------------------------------------------------------------------------------------------    
@@ -82,7 +79,7 @@ begin
         ticks_cnt <= ticks_cnt + 1;
         if (ticks_cnt == OVERSAMPLE_RATE - 1) 
         begin
-          txd_byte   <= {1'b1, txd_byte[NUM_BITS + 2 : 1]};
+          tx_byte   <= {1'b1, tx_byte[NUM_BITS + 2 : 1]};
           ticks_cnt <= '0;
     
           if (idx == 4'd10) 
@@ -97,13 +94,11 @@ begin
         end
       end
     end
-   
 //-------------------------------------------------------------------------------------------------         
     default: 
     begin      
-      txd_byte           <= '0;
+      tx_byte           <= '0;
       idx               <= '0;
-      txd_o              <= 1'b1;
       state             <= TX_IDLE;       
     end      
   endcase

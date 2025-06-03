@@ -2,38 +2,34 @@
 module uart_rx
 #(
 
-  parameter OVERSAMPLE_RATE =          16, // Common choices: 8 or 16
-  parameter NUM_BITS        =          11, // 1 start bit, 8 databit, 1 parity bit, 1 stop bit
-  parameter PARITY_ON       =           1, // 0: Parity disabled. 1: Parity enabled.
-  parameter PARITY_EO       =           1  // 0: Even parity. 1: Odd parity.
+  parameter OVERSAMPLE_RATE =          16,                              // Common choices: 8 or 16
+  parameter NUM_BITS        =          11,                              // 1 start bit, 8 databit, 1 parity bit, 1 stop bit
+  parameter PARITY_ON       =           1,                              // 0: Parity disabled. 1: Parity enabled.
+  parameter PARITY_EO       =           1                               // 0: Even parity. 1: Odd parity.
 )
 (
   input wire                     clk_i,
   input wire                     rst_i,
   input wire                     tick_i,
-  input wire                     rxd_i,             // принимаем по одному биту
-  output logic  [NUM_BITS -4 :0] rxd_byte_o,        // это на выход вектор из дата битов
-  output logic                   rxd_vld_o,         // данные готовы все приняли
-  output logic                   rxd_err_o          // проверка четность не четность если ошибка
+  input wire                     rxd_i,                                 // receiving one bit at a time
+  output logic  [NUM_BITS -4 :0] rxd_byte_o,                            // output is a vector of data bits
+  output logic                   rxd_vld_o,                             // when all bits are received, data is ready
+  output logic                   rxd_err_o                              // parity check (even/odd) is performed; if an error is detected — handle accordingly
    
 );
 
 //-------------------------------------------------------------------------------------------------
-// Тут временный регистр со значениями с PYTHON 
-logic [NUM_BITS -1       :0]      rxd_buf;         // временый регистр куда все биты с TX сохранять будем 
-logic [$clog2(NUM_BITS)-1:0]      rxd_buf_cnt;     // это счетчик считанных битов сколько битов записали
-//-------------------------------------------------------------------------------------------------
-
+// temporary register holds values 
+logic [NUM_BITS -1       :0]      rxd_buf;                              // input byte
+logic [$clog2(NUM_BITS)-1:0]      rxd_buf_cnt;                          // packet of bytes (start data parity stop) 
 
 //-------------------------------------------------------------------------------------------------
 // Parity even/odd encoding
-localparam EVEN_PAR = 0; // четное
-localparam ODD_PAR  = 1; // нечетное 
-//-------------------------------------------------------------------------------------------------
-
+localparam EVEN_PAR = 0; 
+localparam ODD_PAR  = 1;  
 
 //-------------------------------------------------------------------------------------------------
-// Это выборка из трек последовательных битов по последнему значению пришедшему [2] делаем вывод 0 или 1 
+// It's a majority filter that outputs the value occurring at least twice among the last three input bits 
 logic [2:0] rxd;
 logic       rxd_sync;    
 always_ff @(posedge clk_i) 
@@ -49,24 +45,23 @@ begin
       rxd_sync <= (rxd[2])? (rxd[1] | rxd[0]) : (rxd[1] & rxd[0]);
     end
 end
-//-------------------------------------------------------------------------------------------------
-
- 
-// Это счетчик тиков 
-logic [$clog2(OVERSAMPLE_RATE)-1:0] ticks_cnt;  // это счетчик тиков
-//-------------------------------------------------------------------------------------------------
-
-
-//Это счетчик единиц за 16 тиков на основании его будем делать вывод 1 или 0 итоговый бит
-localparam [4:0] LEVEL    = 5'd8;                  // это число 8 
-logic[$clog2(OVERSAMPLE_RATE) :0] rxd_ones_cnt;   // это счетчик который кждый тик будет увеличиваться если на входной бит 1 
-wire   rxd_bit;                                   // это уже конечный обработанный бит который будет записываться в буффер а потом на дата аут пойдет
-assign rxd_bit = (rxd_ones_cnt < LEVEL)? 1'b0 : 1'b1; // тут срвниваем если счетчик больше 8 значит 1 если меньше 8 0
+//------------------------------------------------------------------------------------------------- 
+// Ticks counter 
+logic [$clog2(OVERSAMPLE_RATE)-1:0] ticks_cnt; 
 
 //-------------------------------------------------------------------------------------------------
+// This is a counter of ones over 16 ticks, based on which the final output bit (1 or 0) is decided
+// If you have 16 ticks, then 8 is exactly half of 16. So, if the count of ones during these 16 ticks is 8 or more, 
+// the final bit will be 1; otherwise, it will be 0
+localparam [4:0] LEVEL    = 5'd8; 
+logic[$clog2(OVERSAMPLE_RATE) :0] rxd_ones_cnt;                         // this is a counter that increments on every tick whenever the input bit is 1 
+wire   rxd_bit;                                                         // this is the final processed bit that will be stored in the buffer and then sent to the data output
+assign rxd_bit = (rxd_ones_cnt < LEVEL)? 1'b0 : 1'b1;                   // here we compare: if the counter is greater than 8, then output 1; if less than 8, output 0
+
+//-------------------------------------------------------------------------------------------------
 
 
-// Это FSM начальное состояние -> обрабатываем дата биты -> проверка четности не четности -> стоп бит
+// this is an FSM: initial state → processing data bits → parity check → stop bit.
 //-------------------------------------------------------------------------------------------------
 
 // Control FSM
@@ -98,9 +93,9 @@ begin
         rxd_err_o <= 1'b0;
         rxd_vld_o   <= 1'b0;
         if (tick_i & !rxd_sync) 
-        begin                                                             // первый бит входной  0 то есть старт бит 
+        begin                                                           // the first input bit is 0, which means the start bit 
           state        <= RX_DATA;                                             
-          ticks_cnt    <= 4'd1;                                            // счетчик тиков помним что один бит занимет 16 тиков
+          ticks_cnt    <= 4'd1;                                         // the tick counter counts up to 16 ticks because one bit lasts for 16 ticks
           rxd_buf_cnt  <= '0;
           rxd_ones_cnt <= '0;
         end
@@ -108,35 +103,35 @@ begin
           state        <= RX_IDLE;
       end
 //-------------------------------------------------------------------------------------------------
-    RX_DATA: 
-      begin                                                            // пошли на обработку битов
-      rxd_err_o <= 1'b0;                            
+    RX_DATA:                                                            // data bytes processing (angle)
+      begin                                                             
+      rxd_err_o   <= 1'b0;                            
       rxd_vld_o   <= 1'b0; 
-        if (tick_i)                                                     // тик
+        if (tick_i)                                                    
         begin
-          if (ticks_cnt == OVERSAMPLE_RATE - 1 )                       // тут уже до 16 считаем это информациионный бит мы счейчас в середине информационного бита это как по книге  
+          if (ticks_cnt == OVERSAMPLE_RATE - 1 )                         
           begin
             state <= RX_NEXT;
           end
-          ticks_cnt      <= ticks_cnt + 1;                             // начали считать тики 
-          rxd_ones_cnt   <= rxd_ones_cnt + {4'd0,rxd_sync};
+          ticks_cnt      <= ticks_cnt + 1;                              
+          rxd_ones_cnt   <= rxd_ones_cnt + {4'd0,rxd_sync};             // a counter that increments on every tick whenever the input bit is 1             
         end
         
       end
 //-------------------------------------------------------------------------------------------------
-    RX_NEXT:
+    RX_NEXT:                                                            // data bytes processing (angle)
       begin
       rxd_err_o  <= 1'b0;
       rxd_vld_o  <= 1'b0;
-      rxd_buf    <= { rxd_bit,rxd_buf[NUM_BITS -1: 1] };
-      rxd_byte_o <= rxd_buf[NUM_BITS -1 :3];
-      if(rxd_buf_cnt < (NUM_BITS -2))
+      rxd_buf    <= { rxd_bit,rxd_buf[NUM_BITS -1: 1] };                // bits are sequentially shifted into an array
+      rxd_byte_o <= rxd_buf[NUM_BITS -1 :3];                            // this is a slice of bytes that represent the angle value
+      if(rxd_buf_cnt < (NUM_BITS -2))                                   // < 9: continue collecting data bytes sequentially 
       begin
         state        <= RX_DATA;
         rxd_buf_cnt  <= rxd_buf_cnt + 4'd1;
         rxd_ones_cnt <= 5'd0;
       end
-      else
+      else                                                              // after collecting 8 bytes, on the next tick we perform the parity check
       begin
         state        <= RX_STOP_BIT;
         rxd_err_o    <= ( (PARITY_EO==EVEN_PAR &&  ((^rxd_buf[NUM_BITS -1 :3]) ^ rxd_bit)) || (PARITY_EO==ODD_PAR  && ~((^rxd_buf[NUM_BITS -1 :3]) ^ rxd_bit)) );
@@ -149,14 +144,14 @@ begin
       begin
       rxd_err_o <= '0;
       rxd_vld_o <= '0;
-      if (tick_i)                                             // тик пришел
+      if (tick_i)                                             
       begin
-      ticks_cnt    <= ticks_cnt   + 1;                        // считаем тики
+      ticks_cnt    <= ticks_cnt   + 1;                        
       rxd_ones_cnt <= rxd_ones_cnt + {4'd0,rxd_sync};
-        if (ticks_cnt  == OVERSAMPLE_RATE - 1 )               // тут если 16 тиков прошло и входной бит 1 это стоп бит он 1 должен быть
+        if (ticks_cnt  == OVERSAMPLE_RATE - 1 )                         // 16 ticks have passed and the input bit is 1, this is the stop bit, which must be 1 
         begin
           rxd_buf <= { rxd_bit,rxd_buf[NUM_BITS -1: 1] };
-          state   <= RX_STOP;                                 // начали все заново
+          state   <= RX_STOP;                                
         end
         else
         state     <= RX_STOP_BIT;

@@ -3,25 +3,25 @@ import pkg_cordic_sincos::*;
 
 module cordic_sincos 
 #(
-  parameter STAGES,    // # of pipeline stages = [1,48]
-  parameter BITS       // # datapath bitwidth  = [4,48]
+  parameter STAGES,                                                     // # of pipeline stages = [1,48]
+  parameter BITS                                                        // # datapath bitwidth  = [4,48]
 )
 (
   input  wire                       clk_i,
   input  wire                       rst_i,
   input  wire                       pipe_en_i,
   input  wire                       start_i,
-  input  wire signed    [BITS-1 :0] theta_i,            // -2pi to 2pi (upper 4b are signed integer)
+  input  wire signed    [BITS-1 :0] theta_i,                            // -2pi to 2pi (upper 4b are signed integer)
   output wire                       done_o,
-  output wire signed    [BITS-1 :0] sin_theta_o,        // -1 to 1-(2^BITS) (upper 2b are signed integer)
-  output wire signed    [BITS-1 :0] cos_theta_o         // -1 to 1-(2^BITS) (upper 2b are signed integer)
+  output wire signed    [BITS-1 :0] sin_theta_o,                        // -1 to 1-(2^BITS) (upper 2b are signed integer)
+  output wire signed    [BITS-1 :0] cos_theta_o                         // -1 to 1-(2^BITS) (upper 2b are signed integer)
 
 );
 
 logic signed              valid     [STAGES + 1];
 logic signed              sign      [STAGES + 1];
-//ARRAYS
-// Если забыл глянь где пайплайн через генерейт делал тоже самое
+// ARRAYS
+// the same logic in the pipeline folder using generate (сheck out this folder)
 logic signed [BITS-1 :0]   cos      [STAGES + 1];
 logic signed [BITS-1 :0]   sin      [STAGES + 1];
 logic signed [BITS-1 :0]   theta    [STAGES + 1];
