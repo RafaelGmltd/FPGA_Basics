@@ -1,10 +1,13 @@
 # *UART CORDIC*
 
-Let me start by clarifying that I am not the original author of this project and I do not claim credit for someone else’s work.
-All the core development was done by Grant Yu.
-Here is the link to his GitHub: https://github.com/grant4001
-Original project repository:    https://github.com/grant4001/CORDIC-UART-Artix-7
-YouTube video walkthrough:      https://www.youtube.com/watch?v=Tul1gOaTunQ
+Let me start by clarifying that `I am not the original author of this project and I do not claim credit for someone else’s work.`
+`All the core development was done by Grant Yu.`
+
+***Here is the link to his GitHub:*** https://github.com/grant4001
+
+***Original project repository:***    https://github.com/grant4001/CORDIC-UART-Artix-7
+
+***YouTube video walkthrough:***      https://www.youtube.com/watch?v=Tul1gOaTunQ
 
 I only made minor modifications — I added an external tick generator module and replaced the FIFO with a more general-purpose one.
 Most importantly, I studied and analyzed his project thoroughly, as my primary goal is learning and gaining a deeper understanding.
@@ -28,7 +31,7 @@ The script supports two operation modes:
 ## FPGA Data Handling
 Once the packet is received by the FPGA, it goes through the following processing stages:
 
-### uart_rx module:
+### `uart_rx module:`
 
 Receives the packet byte by byte;
 
@@ -36,7 +39,7 @@ Performs basic framing and integrity checks (e.g., stop bit, parity);
 
 Passes the complete packet to the next stage if no UART-level errors are detected.
 
-### rx_msg module:
+### `rx_msg module:`
 
 Parses the packet;
 
@@ -44,20 +47,20 @@ Extracts the command byte and angle data;
 
 Forwards the command byte directly to the tx_msg module;
 
-Sends the angle (in fixed-point Q4.44) to the cordic_sincos computational module.
+Sends the angle (`in fixed-point Q4.44`) to the cordic_sincos computational module.
 
-### cordic_sincos module:
+### `cordic_sincos module:`
 
 Computes cos(θ) and sin(θ) using a fully pipelined CORDIC algorithm;
-Outputs the results in fixed-point Q2.46 format.
+Outputs the results `in fixed-point Q2.46 format`.
 
-### tx_msg module:
+### `tx_msg module:`
 
 Receives the command byte and computed values;
 Assembles a new response packet including header, command, cos(θ), sin(θ), and recalculated CRC-8;
 Pushes the completed packet to an output FIFO to decouple computation from transmission.
 
-### uart_tx module:
+### `uart_tx module:`
 
 Reads the response packet from the FIFO;
 Sends it byte-by-byte back over UART to the Python client.
@@ -78,13 +81,13 @@ Take 8 bits of data (for example, data = 8'b10110010)
 Count the number of ones: num_ones = 4
 Based on the parameter PARITY_EO:
 
-If PARITY_EO = 0 (even parity):
-parity_bit = ^data (XOR of all bits)
-→ This bit will be 0 when the total number of ones is even.
+- If PARITY_EO = 0 (even parity):
+  parity_bit   = ^data (XOR of all bits)
+  → This bit will be 0 when the total number of ones is even.
 
-If PARITY_EO = 1 (odd parity):
-parity_bit = ~(^data) (inverted XOR)
-→ This ensures that the total number of ones becomes odd.
+- If PARITY_EO = 1 (odd parity):
+  parity_bit   = ~(^data) (inverted XOR)
+  → This ensures that the total number of ones becomes odd.
 
 The generated parity_bit is inserted after the 8 data bits, just before the stop bit.
 
@@ -95,11 +98,11 @@ Count the number of ones in the 8 data bits → num_ones
 
 Perform the check based on PARITY_EO:
 
-If PARITY_EO = 0 (even parity):
-(num_ones + parity_bit) % 2 == 0
+**If PARITY_EO = 0 (even parity):**
+**(num_ones + parity_bit) % 2 == 0**
 
-If PARITY_EO = 1 (odd parity):
-(num_ones + parity_bit) % 2 == 1
+**If PARITY_EO = 1 (odd parity):**
+**(num_ones + parity_bit) % 2 == 1**
 
 If the condition fails, a parity error is detected and the packet is considered corrupted.
 
@@ -134,9 +137,9 @@ Represents only positive values (including zero)
 All bits are used for magnitude
 Example: Q4.4 unsigned
 
-4 bits for integer part → range: 0 to 15
+- 4 bits for integer part → range: 0 to 15
 
-4 bits for fractional part → resolution: 1/16
+- 4 bits for fractional part → resolution: 1/16
 
 ### Signed Fixed-Point Number
 
@@ -145,9 +148,9 @@ The most significant bit (MSB) is the sign bit (0 = positive, 1 = negative)
 Typically uses two’s complement representation
 Example: Q4.4 signed
 
-4 bits for integer part → range: -8 to +7
+- 4 bits for integer part → range: -8 to +7
 
-4 bits for fractional part → resolution: 1/16
+- 4 bits for fractional part → resolution: 1/16
 
 # "Two's Complement"
 
@@ -166,7 +169,7 @@ Let’s say we want to represent –3 using 4 bits.
 - Invert bits: 1100
 - Add 1: 1100 + 1 = 1101
 
-So, –3 = 1101 in 4-bit two’s complement.
+So, `–3 = 1101 in 4-bit two’s complement`.
 
 ### Example: Number 2.5 in unsigned Q4.44 format
 
@@ -176,24 +179,17 @@ So, –3 = 1101 in 4-bit two’s complement.
 - Total 48 bits.
 
 2. Convert the number to fixed-point:  
-Multiply the number by \(2^{44}\):
-
-\[
-2.5 \times 2^{44} = 2.5 \times 17,592,186,044,416 = 43,980,465,111,040
-\]
+   `2.5 * 2^44 = 43,980,465,111,040`
 
 3. Convert to binary:  
-Represent the integer \(43,980,465,111,040\) as a 48-bit binary number or hex (280000000000)
-You can use the script located in the Python folder named `angle_conversions.py` to verify the result — it will output 2.5.
+   Represent the integer 43,980,465,111,040 as a 48-bit binary number or hex (280000000000)
+   You can use the script located in the Python folder named `angle_conversions.py` to verify the result — it will output 2.5.
 
 4. Result:  
 This 48-bit unsigned integer is the fixed-point representation of 2.5 in Q4.44.
 
-To convert back to a floating-point number:
-
-\[
-\frac{43,980,465,111,040}{2^{44}} = 2.5
-\]
+   To convert back to a floating-point number:
+   `43,980,465,111,040 / 2^44 = 2.5`
 
 So, for unsigned fixed-point numbers, you just multiply the floating number by \(2^{\text{fractional bits}}\) 
 and convert to an integer — this integer is the fixed-point encoding.
@@ -218,6 +214,59 @@ These operations are implemented via logical checks and arithmetic on the Q4.44 
 After normalization, the angle is shifted left by 2 bits (converted from **Q4.44** to **Q2.46**) to scale it to the format of the coefficient and arctangent lookup tables used in the main CORDIC stages.
 
 ![Normalization](Anglecorrection.jpg)
+
+## Explanation of the CORDIC Algorithm
+
+CORDIC (COordinate Rotation DIgital Computer) is an iterative algorithm used to compute trigonometric functions such as sine and cosine, as well as other functions. It is based on a sequence of vector rotations by predefined angles.
+
+Suppose we have an input angle in fixed-point format, and we want to calculate its sine and cosine. Recall that `the cosine corresponds to the X-axis projection`, while `the sine corresponds to the Y-axis projection` . Somewhere on the unit circle lies the point that represents our desired angle, but its exact coordinates are unknown. We approximate this point step by step by rotating a vector through a sequence of predefined angles.
+
+These rotation angles are precomputed and stored in an arctangent lookup table located in the file `pkg_cordic_sincos.sv`. The table contains values of 
+`arctan (2^(−𝑖))` used in each iteration.
+
+### Initial State
+
+The rotation begins from a vector pointing along the X-axis, which corresponds to angle zero:
+- cos(0) = 1 
+- sin(0) = 0
+
+However, it's important to note that we do not start with a cosine value of exactly 1. Instead, we initialize it with a scaling factor K. This is because each CORDIC rotation slightly increases the vector's length due to the approximation used. To correct for this, a scaling coefficient 𝐾 is applied, which depends on the number of iterations.
+
+In the code, the initialization looks like this:
+- assign cos_o = K[ STAGES-1 ]; // initial cos value with scaling
+- assign sin_o = '0;          // initial sin value is zero
+
+The values of the scaling factor 𝐾 are also predefined and stored in `pkg_cordic_sincos.sv`.
+
+### Iteration Process in CORDIC
+
+Now that we have defined the initial state of the vector, the iterative process begins. In each iteration, the vector is rotated by an angle of approximately 
+arctan(2^(−𝑖)) i is the iteration number.
+
+This is done using the following update equations:
+
+![Equations](cordic.jpg)
+
+- X(i) Y(i)         `are the current vector coordinates (cosine and sine)`
+- θ(i)              `is the current residual angle`
+- d(i) = sign(θ(i)) `determines the direction of rotation: if θ(i) >= 0 the vector is rotated clockwise, otherwise counterclockwise`
+
+In Verilog, this logic is implemented using shift operations and sign checks (avoiding multiplications):
+
+- assign delta_cos   = ( theta_i[ BITS-1 ] ?  sin_i : -sin_i ) >>> STAGE  ;  
+- assign delta_sin   = ( theta_i[ BITS-1 ] ? -cos_i :  cos_i ) >>> STAGE  ;
+- assign delta_theta = ( theta_i[ BITS-1 ] ? ATAN[ STAGE]  : (-ATAN[ STAGE ]) ;
+
+`>>> STAGE == /2^i`
+`theta_i[ BITS-1 ] == MSB(theta_i)`
+
+In each step, we rotate the vector in a direction that reduces the residual angle θ(i) , bringing it closer to zero.
+
+### Number of Iterations
+
+The more iterations are performed, the higher the precision of the result. In your case, 48 iterations are used, which yields high-precision sine and cosine values for the input angle, represented in FixedPoint format (e.g., Q4.44). These iterations are implemented as a cascade of pipeline stages.
+
+
 
 
 
