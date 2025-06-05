@@ -3,7 +3,7 @@
 Matrix, a set of numbers arranged in rows and columns so as to form a rectangular array. The numbers are called the elements, or entries, of the matrix.
 If there are `i rows` and `j columns`, the matrix is said to be an `“i by j” matrix, written “i× j.”` For example:
 
-```
+```verilog
 ⎡ 1   3   5 ⎤ 
 ⎢ 2   7   8 ⎥ 
 ⎢ 6   1   9 ⎥ 
@@ -15,7 +15,7 @@ thus, 3 can be thought of as the matrix [ 3 ]. A matrix with only one row and n 
 is called `a column vector`.
 
 Matrices occur naturally in systems of simultaneous equations. In the following system for the unknowns x and y,
-```
+```m
 4x + 5y = -2
 -2x - 6y = 3 
 ```
