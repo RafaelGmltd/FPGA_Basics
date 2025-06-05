@@ -15,7 +15,7 @@ thus, 3 can be thought of as the matrix [ 3 ]. A matrix with only one row and n 
 is called `a column vector`.
 
 Matrices occur naturally in systems of simultaneous equations. In the following system for the unknowns x and y,
-```m
+```python
 4x + 5y = -2
 -2x - 6y = 3 
 ```
