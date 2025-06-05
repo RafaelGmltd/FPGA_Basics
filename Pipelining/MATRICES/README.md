@@ -3,19 +3,22 @@
 Matrix, a set of numbers arranged in rows and columns so as to form a rectangular array. The numbers are called the elements, or entries, of the matrix.
 If there are `i rows` and `j columns`, the matrix is said to be an `“i by j” matrix, written “i× j.”` For example:
 
-``` ⎡ 1   3   5 ⎤ ```
-``` ⎢ 2   7   8 ⎥ ```
-``` ⎢ 6   1   9 ⎥ ```
-``` ⎣           ⎦ ```
+```
+⎡ 1   3   5 ⎤ 
+⎢ 2   7   8 ⎥ 
+⎢ 6   1   9 ⎥ 
+⎣           ⎦ 
+```
 
 is a 3 × 3 matrix. A matrix with i rows and i columns is called `a square matrix of order i`. An ordinary number can be regarded as a 1 × 1 matrix; 
 thus, 3 can be thought of as the matrix [ 3 ]. A matrix with only one row and n columns is called `a row vector`, and a matrix with only one column and i rows 
 is called `a column vector`.
 
 Matrices occur naturally in systems of simultaneous equations. In the following system for the unknowns x and y,
-
-```  4x + 5y = -2 ```
-``` -2x - 6y = 3  ```
+```
+4x + 5y = -2
+-2x - 6y = 3 
+```
 
 the array of numbers
 
