@@ -181,3 +181,9 @@ This design enables a high degree of parallelism. Data flows continuously throug
 
 ![Node](NODE.jpg)
 
+![Multiplication of matrices](Systolic.jpg)
+
+The computation propagates diagonally from the top-left node to the bottom-right corner, one clock cycle at a time.
+
+![Propagates diagonally](Sys.Array.gif)
+
