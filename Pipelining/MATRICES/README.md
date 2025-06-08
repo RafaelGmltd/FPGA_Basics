@@ -153,8 +153,8 @@ The main rule for matrix multiplication is:
 The number of columns in the first matrix must equal the number of rows in the second matrix.
 
 If you have matrices:
-A of size `𝑚×𝑛` and B of size `𝑛×𝑝`
-Then the product  𝐶 = 𝐴 × 𝐵 is defined, and the resulting matrix C will have size `𝑚×𝑝`.
+A of size `𝑚 × 𝑛` and B of size `𝑛 × 𝑝`
+Then the product  𝐶 = 𝐴 × 𝐵 is defined, and the resulting matrix C will have size `𝑚 × 𝑝`.
 ```verilog
 A                                   B                                   C
 
@@ -181,9 +181,56 @@ This design enables a high degree of parallelism. Data flows continuously throug
 
 ![Node](NODE.jpg)
 
+### Weight Stationary Mode in Systolic Arrays
+
+In Weight Stationary (WS) mode, the weights (the matrix elements representing the coefficients in matrix multiplication) are kept fixed or stationary inside the Processing Elements (PEs or NODES) for the duration of a computation.
+
+The input activations or data vectors stream through the array and interact with these stationary weights.
+Each PE holds a fixed weight value and accumulates partial sums as input data flows through.
+
+Each PE stores one or several weight values.
+Input data moves horizontally or vertically through the array.
+Partial products are calculated in each PE by multiplying the input data by the fixed weight.
+Partial sums are accumulated and passed along to neighboring PEs until the final result reaches the output.
+
+Minimizes weight data movement — weights are loaded once and reused multiple times.
+Enables high throughput by allowing continuous streaming of input data.
+
 ![Multiplication of matrices](Systolic.jpg)
 
 The computation propagates diagonally from the top-left node to the bottom-right corner, one clock cycle at a time.
 
 ![Propagates diagonally](Sys.Array.gif)
 
+
+
+### Modes of Operation in Systolic Arrays
+
+1. Weight Stationary (WS)
+What stays stationary: weights (weight matrix) remain inside each Processing Element (PE) and do not move during computation.
+
+What moves: input data (activations) flow through the array of PEs.
+
+Advantages: minimizes the movement of weights—which usually constitute the largest data volume—reducing energy consumption and data bus load.
+
+Typical use: inference in neural networks where weights are fixed and inputs change continuously.
+
+2. Input Stationary (IS)
+What stays stationary: input data (activations) are held inside each PE.
+
+What moves: weights flow through the array.
+
+Advantages: reduces the transfer of input data across the array, useful when inputs have high reuse and weights change dynamically.
+
+Typical use: training neural networks or scenarios with high input reuse.
+
+3. Output Stationary (OS)
+What stays stationary: partial sums (outputs) remain inside each PE.
+
+What moves: both inputs and weights move through the array.
+
+Advantages: efficient accumulation of partial sums locally, minimizing communication of intermediate results between PEs.
+
+Typical use: matrix operations with heavy accumulation requirements.
+
+**The material is being supplemented**
