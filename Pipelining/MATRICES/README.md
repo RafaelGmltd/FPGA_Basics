@@ -168,7 +168,7 @@ Matrix multiplication can be viewed as performing linear equations or linear tra
 
 ```verilog
 C[i][j] = A[i][0] * B[0][j] + A[i][1] * B[1][j] + A[i][2] * B[2][j] ... + ... A[i][n-1] * B[n-1][j]
-```verilog
+```
 
 # *Systolic Array*
 
