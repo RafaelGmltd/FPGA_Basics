@@ -155,17 +155,20 @@ The number of columns in the first matrix must equal the number of rows in the s
 If you have matrices:
 A of size `𝑚×𝑛` and B of size `𝑛×𝑝`
 Then the product  𝐶 = 𝐴 × 𝐵 is defined, and the resulting matrix C will have size `𝑚×𝑝`.
-
+```verilog
 A                                   B                                   C
 
 ⎡ A[0][0]  A[0][1]   A[0][2] ⎤       ⎡ B[0][0]  B[0][1]   B[0][2] ⎤       ⎡ C[0][0]  C[0][1]   C[0][2] ⎤
 ⎢ A[1][0]  A[1][1]   A[1][2] ⎥   X   ⎢ B[1][0]  B[1][1]   B[1][2] ⎥   =   ⎢ C[1][0]  C[1][1]   C[1][2] ⎥
 ⎢ A[2][0]  A[2][1]   A[2][2] ⎥       ⎢ B[2][0]  B[2][1]   B[2][2] ⎥       ⎢ C[2][0]  C[2][1]   C[2][2] ⎥
 ⎣                            ⎦       ⎣                            ⎦       ⎣                            ⎦
+```
 
-Matrix multiplication can be viewed as performing linear equations or linear transformations.
+Matrix multiplication can be viewed as performing linear equations or linear transformations
 
+```verilog
 C[i][j] = A[i][0] * B[0][j] + A[i][1] * B[1][j] + A[i][2] * B[2][j] ... + ... A[i][n-1] * B[n-1][j]
+```verilog
 
 # *Systolic Array*
 
